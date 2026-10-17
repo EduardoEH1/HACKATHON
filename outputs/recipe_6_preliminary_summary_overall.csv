@@ -1,0 +1,7 @@
+recipe_id,channel,sample_count,mean,std,min,max,status
+6,r_mean,18,53.981336805555564,30.10319165535635,18.846354166666668,91.5,observed sample envelope; not an acceptance threshold
+6,g_mean,18,45.85329861111111,16.324946625169854,23.4140625,69.4921875,observed sample envelope; not an acceptance threshold
+6,b_mean,18,25.15190972222222,5.7871894723932344,18.4140625,35.2421875,observed sample envelope; not an acceptance threshold
+6,h_mean_opencv,18,36.09056712962963,18.659304463790562,16.8671875,70.04166666666667,observed sample envelope; not an acceptance threshold
+6,s_mean_opencv,18,120.4580439814815,53.41937746088742,50.96875,179.3359375,observed sample envelope; not an acceptance threshold
+6,v_mean_opencv,18,56.77850115740741,27.773567948215913,23.497395833333332,91.5,observed sample envelope; not an acceptance threshold
