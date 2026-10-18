@@ -1,0 +1,13 @@
+recipe_id,vial,channel,sample_count,mean,std,min,max,status
+14,29,r_mean,10,50.1203125,0.47056105901609097,49.419270833333336,50.828125,preliminary; not a validated reference or threshold
+14,29,g_mean,10,26.179166666666664,0.14635838846553442,25.9921875,26.473958333333332,preliminary; not a validated reference or threshold
+14,29,b_mean,10,14.710416666666669,0.47563709863183246,13.963541666666666,15.4765625,preliminary; not a validated reference or threshold
+14,29,h_mean_opencv,10,9.624479166666667,0.38025153547043505,9.0859375,10.4453125,preliminary; not a validated reference or threshold
+14,29,s_mean_opencv,10,179.55286458333333,2.818428692597959,174.27083333333334,183.37239583333334,preliminary; not a validated reference or threshold
+14,29,v_mean_opencv,10,50.1203125,0.47056105901609097,49.419270833333336,50.828125,preliminary; not a validated reference or threshold
+14,30,r_mean,4,101.44921874999999,30.008926570581416,62.669270833333336,130.64322916666666,preliminary; not a validated reference or threshold
+14,30,g_mean,4,49.21419270833333,20.605884095998224,26.401041666666668,72.20833333333333,preliminary; not a validated reference or threshold
+14,30,b_mean,4,22.1953125,8.806516234590394,12.6953125,30.005208333333332,preliminary; not a validated reference or threshold
+14,30,h_mean_opencv,4,9.743489583333334,2.175315873621331,7.760416666666667,12.661458333333334,preliminary; not a validated reference or threshold
+14,30,s_mean_opencv,4,199.548828125,8.164794811155282,190.6015625,210.3515625,preliminary; not a validated reference or threshold
+14,30,v_mean_opencv,4,101.44921874999999,30.008926570581416,62.669270833333336,130.64322916666666,preliminary; not a validated reference or threshold
