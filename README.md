@@ -75,3 +75,16 @@ data/raw/           Expected local dataset location; excluded from Git
 outputs/            Generated CSV results
 requirements.txt    Python dependencies
 ```
+
+### Separate preliminary exploration: Recipe 7
+
+Recipe 7 inputs and outputs are kept separate from Recipe 6 under `data/raw/recipe7/` and `outputs/recipe_7/`. The manual analysis uses the same fixed ROI and the 36 label-matched frames. It retains frames where colored liquid is visible in the ROI: 8 samples from Vial 7, 8 from Vial 8, and 1 from Vial 9. The other 19 frames are listed in `recipe_7_excluded_frames.csv` with the visual reason for exclusion.
+
+```bash
+PYTHONPATH=src python -m vialsense.analyze_recipe7_manual \
+  --labels data/raw/recipe7/labels_video5_frame_labels.csv \
+  --images data/raw/recipe7/images \
+  --output-dir outputs/recipe_7
+```
+
+These results are preliminary. The label description for Recipe 7 says “pale blue”, while the selected frames from Vials 7 and 8 look orange/brown and the single usable frame from Vial 9 looks blue. This visual difference is recorded without inferring its cause. One sample from Vial 9 cannot establish its color variation. Lighting, reflections, glass, and filling stage can affect all measurements. This is not a validated color reference or a contamination threshold.
