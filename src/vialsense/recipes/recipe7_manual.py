@@ -86,7 +86,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--labels", type=Path, default=Path("data/raw/recipe7/labels_video5_frame_labels.csv"))
     parser.add_argument("--images", type=Path, default=Path("data/raw/recipe7/images"))
-    parser.add_argument("--output-dir", type=Path, default=Path("outputs/recipe_7"))
+    parser.add_argument("--output-dir", type=Path, default=Path("results/recipe_7"))
     args = parser.parse_args()
     result = analyze(args.labels, args.images, args.output_dir)
     print(f"Saved {len(result)} preliminary measurements under {args.output_dir}")
