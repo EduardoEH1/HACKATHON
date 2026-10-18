@@ -1,6 +1,6 @@
 # VialSense
 
-VialSense is a small Python prototype for measuring visible liquid color in vial images. It uses OpenCV, NumPy, and pandas. The current work covers preliminary manual-ROI measurements for Recipes 6, 7, 8, 9, and 10.
+VialSense is a small Python prototype for measuring visible liquid color in vial images. It uses OpenCV, NumPy, and pandas. The current work covers preliminary manual-ROI measurements for Recipes 6, 7, 8, 9, 10, and 11.
 
 > **Status:** Every measurement in this repository is preliminary. The CSV summaries describe the sampled images only. They are not validated color references, acceptance limits, or contamination thresholds.
 
@@ -17,6 +17,7 @@ src/vialsense/
     recipe8_manual.py            Recipe 8 sample selection and result generation
     recipe9_manual.py            Recipe 9 sample selection and result generation
     recipe10_manual.py           Recipe 10 sample selection and result generation
+    recipe11_manual.py           Recipe 11 sample selection and result generation
 results/
   recipe_6/
     recipe_6_preliminary_measurements.csv
@@ -47,6 +48,13 @@ results/
     recipe_10_excluded_frames.csv
     annotated_images/             Annotated Recipe 10 images
     recipe_10_roi_montage_vial_*.jpg
+  recipe_11/
+    recipe_11_manual_roi_measurements.csv
+    recipe_11_preliminary_summary_by_vial.csv
+    recipe_11_excluded_frames.csv
+    recipe_11_missing_frames.csv
+    annotated_images/             Annotated Recipe 11 images
+    recipe_11_roi_montage_vial_*.jpg
 requirements.txt
 ```
 
@@ -164,6 +172,29 @@ The preliminary per-vial means are:
 | 18 | 19 | (13.68, 22.30, 19.85) | (81.99, 102.13, 22.40) |
 
 Most retained frames look very dark green, which differs from the label description “pale wash”. Vials 17 and 18 have similarly dark averages. Vial 16's first retained frame is a lighter, low-saturation transition (RGB 93.13, 101.46, 77.47; OpenCV HSV 40.37, 60.56, 101.46); its remaining 13 frames average RGB (18.77, 31.06, 27.25) and look dark green. That visible transition frame raises Vial 16's overall mean. Fill stage, mixing, reflections, and the glass can affect these measurements. The images do not establish the cause or show contamination. Results remain preliminary, not validated reference colors or thresholds.
+
+### Preliminary Results: Recipe 11
+
+The label CSV contains 62 in-fill images: 20 for Vial 19, 21 for Vial 20, and 21 for Vial 21. The uploaded ZIP contains 52 readable images at 640×480. All 52 filenames match Recipe 11 labels and there are no extra filenames from other recipes. Ten labeled images were absent; their exact names are in `results/recipe_11/recipe_11_missing_frames.csv`. The reviewed shared manual ROI retains 19 images (14 from Vial 19, 3 from Vial 20, and 2 from Vial 21); 33 available images without visible liquid in that region or after the vial moved are documented in `recipe_11_excluded_frames.csv`.
+
+Run the analysis with:
+
+```bash
+PYTHONPATH=src python -m vialsense.recipes.recipe11_manual \
+  --labels data/raw/recipe7/labels_video5_frame_labels.csv \
+  --images data/raw/recipe11/images \
+  --output-dir results/recipe_11
+```
+
+The preliminary per-vial means are:
+
+| Vial | Samples | Mean RGB | Mean HSV (OpenCV) |
+|---|---:|---|---|
+| 19 | 14 | (17.86, 28.22, 26.23) | (84.95, 102.35, 28.56) |
+| 20 | 3 | (43.79, 43.48, 22.05) | (29.75, 128.57, 44.24) |
+| 21 | 2 | (59.90, 63.43, 47.40) | (38.17, 77.79, 63.43) |
+
+The measured regions vary visibly: Vial 19 appears darker and greener/teal, while the few retained images from Vials 20 and 21 appear brighter and more olive/yellow. The label CSV does not provide a color-purpose description. Vials 20 and 21 have only three and two measurements, respectively, so their means are especially tentative. The ROI is close to the vial base and support, where glass and reflections can affect pixel values; the images do not establish why the samples differ and do not show that contamination occurred. These measurements are preliminary, not validated color references or thresholds.
 
 All recipe commands accept path overrides. Run a command with `--help` to see the options. Outputs are saved in their recipe-specific result folders by default.
 
