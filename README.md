@@ -1,6 +1,6 @@
 # VialSense
 
-VialSense is a small Python prototype for measuring visible liquid color in vial images. It uses OpenCV, NumPy, and pandas. The current work covers preliminary manual-ROI measurements for Recipes 6, 7, 8, 9, 10, 11, and 12.
+VialSense is a small Python prototype for measuring visible liquid color in vial images. It uses OpenCV, NumPy, and pandas. The current work covers preliminary manual-ROI measurements for Recipes 6, 7, 8, 9, 10, 11, 12, and 13.
 
 > **Status:** Every measurement in this repository is preliminary. The CSV summaries describe the sampled images only. They are not validated color references, acceptance limits, or contamination thresholds.
 
@@ -19,6 +19,7 @@ src/vialsense/
     recipe10_manual.py           Recipe 10 sample selection and result generation
     recipe11_manual.py           Recipe 11 sample selection and result generation
     recipe12_manual.py           Recipe 12 sample selection and result generation
+    recipe13_manual.py           Recipe 13 sample selection and result generation
 results/
   recipe_6/
     recipe_6_preliminary_measurements.csv
@@ -63,6 +64,13 @@ results/
     recipe_12_missing_frames.csv
     annotated_images/             Annotated Recipe 12 images
     recipe_12_roi_montage_vial_*.jpg
+  recipe_13/
+    recipe_13_manual_roi_measurements.csv
+    recipe_13_preliminary_summary_by_vial.csv
+    recipe_13_excluded_frames.csv
+    recipe_13_missing_frames.csv
+    annotated_images/             Annotated Recipe 13 images
+    recipe_13_roi_montage_vial_*.jpg
 requirements.txt
 ```
 
@@ -226,6 +234,29 @@ The preliminary per-vial means are:
 | 24 | 7 | (14.26, 27.15, 26.82) | (89.50, 125.42, 27.40) |
 
 The selected regions look olive/yellow-green in Vial 22, greener in Vial 23, and more cyan/teal in Vial 24. Vial 22 has only two retained frames, so its mean is especially uncertain. Fill stage, illumination, liquid motion, reflections, and the vial glass can affect these pixels; the measurements do not establish why the vials differ or indicate contamination. They remain preliminary and are not validated color references or thresholds.
+
+### Preliminary Results: Recipe 13
+
+The label CSV describes Recipe 13 as a 70 ml pair of T200 (50 ml) and T400 (20 ml), dispensed in `T200>T400` order. The ZIP contains all 55 labeled images: 19 from Vial 25, 18 from Vial 26, and 18 from Vial 27. There are no missing or extra filenames, and all images decode at 640×480. Visual review of the shared manual ROI retained 42 images: 10 from Vial 25, all 18 from Vial 26, and 14 from Vial 27. The other 13 frames and their exclusion notes are in `results/recipe_13/recipe_13_excluded_frames.csv`.
+
+Run the analysis with:
+
+```bash
+PYTHONPATH=src python -m vialsense.recipes.recipe13_manual \
+  --labels data/raw/recipe7/labels_video5_frame_labels.csv \
+  --images data/raw/recipe13/images \
+  --output-dir results/recipe_13
+```
+
+The preliminary per-vial means are:
+
+| Vial | Samples | Mean RGB | Mean HSV (OpenCV) |
+|---|---:|---|---|
+| 25 | 10 | (12.62, 27.74, 27.25) | (89.28, 142.24, 27.96) |
+| 26 | 18 | (14.21, 24.64, 21.96) | (82.28, 109.57, 24.65) |
+| 27 | 14 | (38.62, 24.37, 16.49) | (10.33, 144.88, 38.62) |
+
+Vials 25 and 26 look dark teal/green in the selected regions. Vial 27 looks orange/brown and has a much higher red channel, an unusual difference for samples with the same recipe label. The images do not establish why they differ or indicate contamination. Lighting, fill stage, liquid motion, reflections, glass, and the small samples can affect the measurements. Results are preliminary, not validated reference colors or thresholds.
 
 All recipe commands accept path overrides. Run a command with `--help` to see the options. Outputs are saved in their recipe-specific result folders by default.
 
