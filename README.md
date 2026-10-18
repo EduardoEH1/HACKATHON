@@ -77,7 +77,7 @@ The script keeps 17 manually selected samples (8 from Vial 7, 8 from Vial 8, and
 
 Both commands accept path overrides. Run a command with `--help` to see its options. Outputs are saved in their recipe-specific result folders by default.
 
-## Reusable functions for Salah
+## Reusable functions for integration
 
 The shared function `vialsense.manual_roi.measure_roi` takes an image path and a rectangle `(x1, y1, x2, y2)` in pixel coordinates. It returns mean RGB and OpenCV HSV values. Example:
 
@@ -96,7 +96,7 @@ hsv_opencv = (
 )
 ```
 
-If Salah's detection system already locates the vial and liquid, it can provide the corresponding image and ROI to this function, or reuse the RGB/HSV calculation with its own detected region. The Recipe 6 and Recipe 7 CSV files can also be loaded with pandas to inspect sampled measurements. The `dataset.load_labeled_frames` function is available for matching one recipe's label rows to local images.
+If an integrated detection system already locates the vial and liquid, it can provide the corresponding image and ROI to this function, or reuse the RGB/HSV calculation with its own detected region. The Recipe 6 and Recipe 7 CSV files can also be loaded with pandas to inspect sampled measurements. The `dataset.load_labeled_frames` function is available for matching one recipe's label rows to local images.
 
 The current ROI coordinates are tied to the existing 640x480 camera framing. They must be adapted or replaced by a validated vial/liquid region from the integrated system if the camera, resolution, position, or framing changes. `color.py` contains an experimental heuristic based on orange/brown pixels; it is not a general-purpose detector and should not be treated as validated for Recipe 7 or production use.
 
@@ -108,7 +108,7 @@ RGB channels use the usual 0–255 scale. OpenCV HSV uses H from 0–179 and S/V
 
 Recipe 6 includes 18 samples from three vials. Recipe 7 includes 17 samples, with only one usable measurement from Vial 9. Recipe 7's label says “pale blue”, while the selected images from Vials 7 and 8 appear orange/brown and the one selected Vial 9 frame appears blue. The reason for this difference has not been established. The results must not be used to claim contamination or define a pass/fail threshold.
 
-Before using these measurements for detection, collect and review more representative images at comparable fill stages and under controlled camera/lighting conditions. Then Salah can establish a validated recipe reference and decision logic with the team. No thresholds are defined by this prototype.
+Before using these measurements for detection, collect and review more representative images at comparable fill stages and under controlled camera/lighting conditions. The project team can then establish a validated recipe reference and decision logic. No thresholds are defined by this prototype.
 
 ## Development branch
 
