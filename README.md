@@ -1,6 +1,6 @@
 # VialSense
 
-VialSense is a small Python prototype for measuring visible liquid color in vial images. It uses OpenCV, NumPy, and pandas. The current work covers preliminary manual-ROI measurements for Recipes 6, 7, and 8.
+VialSense is a small Python prototype for measuring visible liquid color in vial images. It uses OpenCV, NumPy, and pandas. The current work covers preliminary manual-ROI measurements for Recipes 6, 7, 8, and 9.
 
 > **Status:** Every measurement in this repository is preliminary. The CSV summaries describe the sampled images only. They are not validated color references, acceptance limits, or contamination thresholds.
 
@@ -15,6 +15,7 @@ src/vialsense/
     recipe6_manual.py            Recipe 6 sample selection and result generation
     recipe7_manual.py            Recipe 7 sample selection and result generation
     recipe8_manual.py            Recipe 8 sample selection and result generation
+    recipe9_manual.py            Recipe 9 sample selection and result generation
 results/
   recipe_6/
     recipe_6_preliminary_measurements.csv
@@ -33,6 +34,12 @@ results/
     recipe_8_excluded_frames.csv
     annotated_images/             Annotated Recipe 8 images
     recipe_8_roi_montage_vial_*.jpg
+  recipe_9/
+    recipe_9_manual_roi_measurements.csv
+    recipe_9_preliminary_summary_by_vial.csv
+    recipe_9_excluded_frames.csv
+    annotated_images/             Annotated Recipe 9 images
+    recipe_9_roi_montage_vial_*.jpg
 requirements.txt
 ```
 
@@ -105,7 +112,30 @@ The preliminary per-vial means are:
 
 The selected regions look blue across the three vials. Vials 10 and 11 have similar sampled averages. Vial 12 is more variable: its first 10 selected frames average RGB (6.20, 47.38, 71.39), while its last 3 selected frames average (12.00, 32.26, 33.70) and look darker and more teal/green. Fill stage, liquid motion or mixing, glass/reflections, and ROI optics could affect this change; these images do not establish its cause. These measurements remain preliminary and are not validated reference colors or contamination thresholds.
 
-All three commands accept path overrides. Run a command with `--help` to see its options. Outputs are saved in their recipe-specific result folders by default.
+### Preliminary Results: Recipe 9
+
+The labels describe Recipe 9 as an 80 ml triple mixture (10 ml T100, 35 ml T200, and 35 ml T400; dispense order `T200>T400>T100`) with the purpose “dark saturated (low clear)”. The uploaded ZIP contained 70 images. All 70 filenames matched the Recipe 9 in-fill rows in the label CSV, and all were readable at 640×480. Using the same fixed manual ROI, the analysis retains 59 frames with visible liquid: 17 from Vial 13, 18 from Vial 14, and all 24 from Vial 15. The remaining 11 frames show Vials 13 or 14 moving away from the fixed ROI and are listed with reasons in `results/recipe_9/recipe_9_excluded_frames.csv`.
+
+Run the analysis with:
+
+```bash
+PYTHONPATH=src python -m vialsense.recipes.recipe9_manual \
+  --labels data/raw/recipe7/labels_video5_frame_labels.csv \
+  --images data/raw/recipe9/images \
+  --output-dir results/recipe_9
+```
+
+The preliminary per-vial means are:
+
+| Vial | Samples | Mean RGB | Mean HSV (OpenCV) |
+|---|---:|---|---|
+| 13 | 17 | (15.95, 27.66, 23.46) | (79.57, 111.85, 27.67) |
+| 14 | 18 | (15.87, 25.14, 21.37) | (80.64, 99.78, 25.44) |
+| 15 | 24 | (15.46, 24.31, 19.97) | (74.78, 99.50, 24.33) |
+
+The sampled liquid is very dark and greenish across all three vials. Vials 13 and 14 have similar averages. Vial 15 shifts toward a darker olive/yellow-green appearance in its last 8 frames: their mean RGB is (17.65, 23.51, 17.83), compared with (14.36, 24.70, 21.04) across its first 16 frames. The mean OpenCV V value is only about 24–28, so small reflections, glass, and image noise can have a noticeable effect on hue and saturation. Fill stage or optical effects may contribute; the images do not establish the cause. These measurements are preliminary, not validated color references or contamination thresholds.
+
+All recipe commands accept path overrides. Run a command with `--help` to see the options. Outputs are saved in their recipe-specific result folders by default.
 
 ## Reusable functions for integration
 
