@@ -1,6 +1,6 @@
 # VialSense
 
-VialSense is a small Python prototype for measuring visible liquid color in vial images. It uses OpenCV, NumPy, and pandas. The current work covers preliminary manual-ROI measurements for Recipes 6, 7, 8, 9, 10, 11, 12, 13, and 14.
+VialSense is a small Python prototype for measuring visible liquid color in vial images. It uses OpenCV, NumPy, and pandas. The current work covers preliminary manual-ROI measurements for Recipes 5, 6, 7, 8, 9, 10, 11, 12, 13, and 14.
 
 > **Status:** Every measurement in this repository is preliminary. The CSV summaries describe the sampled images only. They are not validated color references, acceptance limits, or contamination thresholds.
 
@@ -12,6 +12,7 @@ src/vialsense/
   dataset.py                     Loads recipe-labeled image rows and checks image paths
   color.py                       Experimental color-column heuristic and pixel filtering
   recipes/
+    recipe5_manual.py            Recipe 5 sample selection and result generation
     recipe6_manual.py            Recipe 6 sample selection and result generation
     recipe7_manual.py            Recipe 7 sample selection and result generation
     recipe8_manual.py            Recipe 8 sample selection and result generation
@@ -22,6 +23,13 @@ src/vialsense/
     recipe13_manual.py           Recipe 13 sample selection and result generation
     recipe14_manual.py           Recipe 14 sample selection and result generation
 results/
+  recipe_5/
+    recipe_5_manual_roi_measurements.csv
+    recipe_5_preliminary_summary_by_vial.csv
+    recipe_5_excluded_frames.csv
+    recipe_5_missing_frames.csv
+    annotated_images/             Annotated Recipe 5 images
+    recipe_5_roi_montage_vial_*.jpg
   recipe_6/
     recipe_6_preliminary_measurements.csv
     recipe_6_preliminary_summary_by_vial.csv
@@ -127,6 +135,29 @@ PYTHONPATH=src python -m vialsense.recipes.recipe7_manual
 ```
 
 The script keeps 17 manually selected samples (8 from Vial 7, 8 from Vial 8, and 1 from Vial 9). The other 19 frames and their exclusion notes are in `results/recipe_7/recipe_7_excluded_frames.csv`.
+
+### Preliminary Results: Recipe 5
+
+The labels describe Recipe 5 as a 30 ml even triple mixture (10 ml from each tank, dispense order `T200>T400>T100`) with purpose “mixed - low even (swapped in)”. The uploaded ZIP contained all 41 labeled images: 13 each for Vials 1 and 2, and 15 for Vial 3. There were no missing, duplicate, or extra filenames, and all images decoded at 640×480. The shared manual ROI retained 25 images: all 13 from Vial 1, 8 from Vial 2, and 4 from Vial 3. The remaining 16 frames did not show clearly measurable colored liquid in the ROI; details are in `results/recipe_5/recipe_5_excluded_frames.csv`.
+
+Run the analysis with:
+
+```bash
+PYTHONPATH=src python -m vialsense.recipes.recipe5_manual \
+  --labels data/raw/recipe7/labels_video5_frame_labels.csv \
+  --images data/raw/recipe5/images \
+  --output-dir results/recipe_5
+```
+
+The preliminary per-vial means are:
+
+| Vial | Samples | Mean RGB | Mean HSV (OpenCV) |
+|---|---:|---|---|
+| 1 | 13 | (22.35, 63.83, 30.94) | (67.23, 170.28, 63.83) |
+| 2 | 8 | (24.38, 75.02, 53.60) | (77.14, 173.21, 75.02) |
+| 3 | 4 | (49.41, 58.02, 35.20) | (42.20, 100.42, 58.02) |
+
+Vials 1 and 2 look green in the measured regions. Vial 3 appears more olive/yellow and has a much higher red channel, though it has only four retained frames. Fill stage, lighting, reflections, and the ROI's position near the vial base can affect these measurements. The images do not establish a cause or indicate contamination. Results remain preliminary, not validated color references or thresholds.
 
 ### Preliminary Results: Recipe 8
 
