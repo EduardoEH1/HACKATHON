@@ -1,6 +1,6 @@
 # VialSense
 
-VialSense is a small Python prototype for measuring visible liquid color in vial images. It uses OpenCV, NumPy, and pandas. The current work covers preliminary manual-ROI measurements for Recipes 6, 7, 8, and 9.
+VialSense is a small Python prototype for measuring visible liquid color in vial images. It uses OpenCV, NumPy, and pandas. The current work covers preliminary manual-ROI measurements for Recipes 6, 7, 8, 9, and 10.
 
 > **Status:** Every measurement in this repository is preliminary. The CSV summaries describe the sampled images only. They are not validated color references, acceptance limits, or contamination thresholds.
 
@@ -16,6 +16,7 @@ src/vialsense/
     recipe7_manual.py            Recipe 7 sample selection and result generation
     recipe8_manual.py            Recipe 8 sample selection and result generation
     recipe9_manual.py            Recipe 9 sample selection and result generation
+    recipe10_manual.py           Recipe 10 sample selection and result generation
 results/
   recipe_6/
     recipe_6_preliminary_measurements.csv
@@ -40,6 +41,12 @@ results/
     recipe_9_excluded_frames.csv
     annotated_images/             Annotated Recipe 9 images
     recipe_9_roi_montage_vial_*.jpg
+  recipe_10/
+    recipe_10_manual_roi_measurements.csv
+    recipe_10_preliminary_summary_by_vial.csv
+    recipe_10_excluded_frames.csv
+    annotated_images/             Annotated Recipe 10 images
+    recipe_10_roi_montage_vial_*.jpg
 requirements.txt
 ```
 
@@ -134,6 +141,29 @@ The preliminary per-vial means are:
 | 15 | 24 | (15.46, 24.31, 19.97) | (74.78, 99.50, 24.33) |
 
 The sampled liquid is very dark and greenish across all three vials. Vials 13 and 14 have similar averages. Vial 15 shifts toward a darker olive/yellow-green appearance in its last 8 frames: their mean RGB is (17.65, 23.51, 17.83), compared with (14.36, 24.70, 21.04) across its first 16 frames. The mean OpenCV V value is only about 24–28, so small reflections, glass, and image noise can have a noticeable effect on hue and saturation. Fill stage or optical effects may contribute; the images do not establish the cause. These measurements are preliminary, not validated color references or contamination thresholds.
+
+### Preliminary Results: Recipe 10
+
+The labels describe Recipe 10 as a 75 ml triple mixture (45 ml T100, 15 ml T200, and 15 ml T400; dispense order `T200>T400>T100`) with the purpose “pale wash (high clear)”. The uploaded ZIP contained 57 images. All 57 filenames matched the Recipe 10 in-fill rows in the label CSV, and all were readable at 640×480. Using the same fixed manual ROI, the analysis retains 38 frames with visible liquid: 14 from Vial 16, 5 from Vial 17, and 19 from Vial 18. The other 19 frames and their exclusion reasons are listed in `results/recipe_10/recipe_10_excluded_frames.csv`.
+
+Run the analysis with:
+
+```bash
+PYTHONPATH=src python -m vialsense.recipes.recipe10_manual \
+  --labels data/raw/recipe7/labels_video5_frame_labels.csv \
+  --images data/raw/recipe10/images \
+  --output-dir results/recipe_10
+```
+
+The preliminary per-vial means are:
+
+| Vial | Samples | Mean RGB | Mean HSV (OpenCV) |
+|---|---:|---|---|
+| 16 | 14 | (24.08, 36.09, 30.84) | (79.11, 104.29, 36.14) |
+| 17 | 5 | (16.49, 23.40, 19.35) | (73.56, 81.15, 23.40) |
+| 18 | 19 | (13.68, 22.30, 19.85) | (81.99, 102.13, 22.40) |
+
+Most retained frames look very dark green, which differs from the label description “pale wash”. Vials 17 and 18 have similarly dark averages. Vial 16's first retained frame is a lighter, low-saturation transition (RGB 93.13, 101.46, 77.47; OpenCV HSV 40.37, 60.56, 101.46); its remaining 13 frames average RGB (18.77, 31.06, 27.25) and look dark green. That visible transition frame raises Vial 16's overall mean. Fill stage, mixing, reflections, and the glass can affect these measurements. The images do not establish the cause or show contamination. Results remain preliminary, not validated reference colors or thresholds.
 
 All recipe commands accept path overrides. Run a command with `--help` to see the options. Outputs are saved in their recipe-specific result folders by default.
 
