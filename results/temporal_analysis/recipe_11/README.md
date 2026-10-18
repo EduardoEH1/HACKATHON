@@ -1,5 +1,7 @@
 # Recipe 11 labeled temporal analysis
 
+[Project overview](../../../README.md) · [Consolidated comparison](../consolidated/README.md) · [Original RGB/HSV measurements](../../recipe_11/recipe_11_manual_roi_measurements.csv)
+
 ## Source and method
 
 This analysis joins the existing preliminary ROI measurement CSV to the original
@@ -35,10 +37,10 @@ failure, or cause.
 
 ## Outputs
 
-- `recipe_11_labeled_timeline.csv`: every labeled in-fill frame with original timestamp, vial-relative elapsed seconds, status, and existing color measurements where available.
-- `recipe_11_vial_summary.csv`: coverage and descriptive per-vial statistics.
-- `recipe_11_rgb_over_fill_time.png` and `recipe_11_hsv_over_fill_time.png`: existing measurements plotted against label-derived fill time; gaps are left unconnected.
-- `recipe_11_frame_coverage.png`: measured, excluded, missing, and unclassified frames along the label timeline.
+- [Labeled timeline CSV](recipe_11_labeled_timeline.csv): every labeled in-fill frame with its timestamp, vial-relative elapsed time, status, and existing color values where available.
+- [Per-vial summary CSV](recipe_11_vial_summary.csv): coverage and descriptive statistics.
+- [RGB plot](recipe_11_rgb_over_fill_time.png) and [HSV plot](recipe_11_hsv_over_fill_time.png): measured samples over the label-derived timeline; gaps remain unconnected.
+- [Frame coverage plot](recipe_11_frame_coverage.png): measured, excluded, missing, and unclassified frame positions.
 
 ## Limitations
 

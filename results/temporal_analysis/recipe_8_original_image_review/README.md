@@ -1,5 +1,7 @@
 # Recipe 8 original-frame review
 
+[Project overview](../../../README.md) · [Temporal analysis guide](../README.md) · [Consolidated comparison](../consolidated/README.md) · [Original RGB/HSV measurements](../../recipe_8/recipe_8_manual_roi_measurements.csv)
+
 This separate review checks the uploaded original image ZIP against the 55
 Recipe 8 `in_fill` labels and re-examines the 31 frames previously excluded
 from the fixed-ROI measurements. Earlier Recipe 8 results and plots remain
@@ -72,18 +74,24 @@ images are not copied into this repository.
   `recipe_8_vial_12_excluded_review.jpg`: contact sheets of the excluded
   frames with the fixed ROI marked in red and the recovered ROI, where
   applicable, marked in green.
-- `analyze_recipe_8_original_frames.py`: reproducible verification, review,
+- `analyze_recipe_8_original_frames.py`: reproducible verification, review,\
   measurement, and plotting script.
 
 ## Re-run
 
-From the repository root, provide the uploaded ZIP and use the existing label,
-measurement, and exclusion CSVs:
+The ZIP archive is not included in Git, and `data/raw/` is excluded from Git.
+The current workspace has the extracted images under `data/raw/recipe8/images/`,
+but the archive-review script requires the original ZIP. From the repository
+root, provide the archive path and use the existing label, measurement, and
+exclusion CSVs:
 
 ```bash
-PYTHONPATH=src python results/temporal_analysis/recipe_8_original_image_review/analyze_recipe_8_original_frames.py \\
-  --zip data/raw/recipe8/Recipe_8.zip
+PYTHONPATH=src python results/temporal_analysis/recipe_8_original_image_review/analyze_recipe_8_original_frames.py \
+  --zip /path/to/Recipe_8.zip
 ```
+
+Replace `/path/to/Recipe_8.zip` with the local archive path. The source ZIP and
+raw images are not committed.
 
 The 55 labels span about 34–36 seconds per vial, but only 4.0 seconds of Vial
 10, 14.1 seconds of Vial 11, and 24.1 seconds of Vial 12 currently have

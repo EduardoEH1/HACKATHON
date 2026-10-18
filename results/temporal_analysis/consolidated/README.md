@@ -1,10 +1,27 @@
 # Consolidated temporal comparison: Recipes 5–14
 
+[Project overview](../../../README.md) · [Temporal analysis guide](../README.md)
+
 This report combines the nine new label-derived analyses with Recipe 8's existing updated temporal results. Recipe 8 files were read only. All color values are pre-existing ROI measurements; no omitted frame was assigned a value.
 
 ## Coverage
 
 See `recipe_coverage_comparison.csv` for frame totals and coverage. Recipe-level totals are summed across each recipe's vials; the mean-vial coverage column is an unweighted average across vials.
+
+## Recipe files
+
+| Recipe | Timeline and plot notes | Existing RGB/HSV measurement CSV |
+|---:|---|---|
+| 5 | [Recipe 5](../recipe_5/README.md) | [CSV](../../recipe_5/recipe_5_manual_roi_measurements.csv) |
+| 6 | [Recipe 6](../recipe_6/README.md) | [CSV](../../recipe_6/recipe_6_preliminary_measurements.csv) |
+| 7 | [Recipe 7](../recipe_7/README.md) | [CSV](../../recipe_7/recipe_7_manual_roi_measurements.csv) |
+| 8 | [Recipe 8 label timeline](../recipe_8_fill_timeline/README.md) · [updated image review](../recipe_8_original_image_review/README.md) | [CSV](../../recipe_8/recipe_8_manual_roi_measurements.csv) |
+| 9 | [Recipe 9](../recipe_9/README.md) | [CSV](../../recipe_9/recipe_9_manual_roi_measurements.csv) |
+| 10 | [Recipe 10](../recipe_10/README.md) | [CSV](../../recipe_10/recipe_10_manual_roi_measurements.csv) |
+| 11 | [Recipe 11](../recipe_11/README.md) | [CSV](../../recipe_11/recipe_11_manual_roi_measurements.csv) |
+| 12 | [Recipe 12](../recipe_12/README.md) | [CSV](../../recipe_12/recipe_12_manual_roi_measurements.csv) |
+| 13 | [Recipe 13](../recipe_13/README.md) | [CSV](../../recipe_13/recipe_13_manual_roi_measurements.csv) |
+| 14 | [Recipe 14](../recipe_14/README.md) | [CSV](../../recipe_14/recipe_14_manual_roi_measurements.csv) |
 
 ## Patterns and data quality
 

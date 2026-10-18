@@ -1,359 +1,243 @@
-# VialSense
+# VialSense color analysis
 
-VialSense is a small Python prototype for measuring visible liquid color in vial images. It uses OpenCV, NumPy, and pandas. The current work covers preliminary manual-ROI measurements for Recipes 5, 6, 7, 8, 9, 10, 11, 12, 13, and 14.
+VialSense is a Python prototype for describing the visible color of liquids in
+vials from images recorded at a fluid mixing station. The work supports a
+future camera-based check that a vial's observed color is consistent with its
+assigned recipe.
 
-> **Status:** Every measurement in this repository is preliminary. The CSV summaries describe the sampled images only. They are not validated color references, acceptance limits, or contamination thresholds.
+> **Project status:** This repository contains preliminary color
+> characterization and temporal analysis. It is **not a validated contamination
+> detector**. Measurements are not validated recipe references, acceptance
+> limits, or contamination thresholds.
 
-## Project layout
+## Current progress
+
+- Preliminary RGB and OpenCV HSV measurements are available for Recipes 5–14.
+- Temporal plots and labeled-frame coverage summaries are available for all ten
+  recipes. The Recipe 8 temporal work includes an additional cautious sample
+  from a manually moved ROI; see its [review notes](results/temporal_analysis/recipe_8_original_image_review/README.md).
+- Analyses use selected frames and manually reviewed fixed regions of interest
+  (ROIs). They describe the recorded pixels; they do not determine why vials or
+  time points differ.
+- The checked-in branch is `color-analysis`.
+
+## Start here
+
+| I want to… | Start with |
+|---|---|
+| See the overall temporal comparison and coverage | [Consolidated comparison](results/temporal_analysis/consolidated/README.md) |
+| Find a recipe's timeline, plots, and per-vial summary | [Recipe temporal results](#temporal-results) |
+| Understand the original per-recipe RGB/HSV measurements | [Recipe result folders](#rgbhsv-results) |
+| Recreate temporal plots from the existing CSVs | [Temporal analysis instructions](results/temporal_analysis/README.md) |
+| Re-measure image pixels | [Setup and image analysis instructions](#setup-and-reproduce) |
+
+## Method
+
+The original RGB/HSV scripts use OpenCV and pandas to join each recipe's image
+labels to selected image files and calculate mean color values. Most recipe
+analyses use the shared 24×16-pixel ROI `(304, 384, 328, 400)` in the 640×480
+camera view. The samples were selected for visible liquid, and annotated images
+show the measured region. Recipe 8's original-image review adds one cautious
+measurement using a relocated ROI; that result is kept separate in its temporal
+review files.
+
+RGB channels use a 0–255 scale. OpenCV HSV uses hue from 0–179 and saturation
+and value from 0–255. These are image pixel values, not calibrated physical
+color measurements.
+
+The temporal analyses reuse the saved RGB/HSV values and original frame
+timestamps. For Recipes 5–7 and 9–14, elapsed time starts at the first frame
+labeled `in_fill=1` for each vial. Recipe 8 has both an earlier measurement-
+anchored timeline and a later label-anchored review. `in_fill` is a binary label:
+it does not provide exact dispense onset, fill height, liquid volume, or dispense
+phase. Frames without a stored measurement stay blank in the timelines.
+
+## Main findings
+
+- Recipe 9 has the strongest measurement coverage (59 of 70 labeled in-fill
+  frames) and comparatively similar sampled colors across its three vials.
+  Recipe 13 also has relatively high coverage (42 of 55 frames), though Vial 27
+  differs visibly from Vials 25 and 26.
+- Coverage is uneven. Recipe 12 has 15 measurements for 65 labeled frames;
+  Recipe 11 has 19 measurements for 62 labels and 10 image files missing from
+  the available set. Recipe 7 has only one measurement for Vial 9. Recipe 14
+  has no measurement for Vial 28.
+- Other cross-vial or temporal differences appear in Recipes 6, 7, 8, 10, 11,
+  12, and 14. Examples include the later turquoise shift in Recipe 8 Vial 12
+  and the orange/brown measurements for Recipe 7 Vials 7–8 despite a pale-blue
+  recipe description.
+- These are differences in selected ROI values. Lighting, reflections, vial
+  movement, fill stage, liquid depth, and ROI placement may affect them. The
+  current data do not establish contamination or its cause.
+
+The [consolidated comparison](results/temporal_analysis/consolidated/README.md)
+includes all ten recipes, per-recipe coverage, and links to the temporal files.
+
+## Repository map
 
 ```text
 src/vialsense/
-  manual_roi.py                  Shared RGB/HSV measurement and ROI annotation functions
-  dataset.py                     Loads recipe-labeled image rows and checks image paths
-  color.py                       Experimental color-column heuristic and pixel filtering
-  recipes/
-    recipe5_manual.py            Recipe 5 sample selection and result generation
-    recipe6_manual.py            Recipe 6 sample selection and result generation
-    recipe7_manual.py            Recipe 7 sample selection and result generation
-    recipe8_manual.py            Recipe 8 sample selection and result generation
-    recipe9_manual.py            Recipe 9 sample selection and result generation
-    recipe10_manual.py           Recipe 10 sample selection and result generation
-    recipe11_manual.py           Recipe 11 sample selection and result generation
-    recipe12_manual.py           Recipe 12 sample selection and result generation
-    recipe13_manual.py           Recipe 13 sample selection and result generation
-    recipe14_manual.py           Recipe 14 sample selection and result generation
+  manual_roi.py                 RGB/HSV measurement and ROI annotation
+  dataset.py                    Label-to-image matching
+  color.py                      Experimental color-based locator; limited scope
+  analyze_recipe.py             Experimental single-image analysis entry point
+  recipes/                      Recipe-specific manual frame selection/scripts
 results/
-  recipe_5/
-    recipe_5_manual_roi_measurements.csv
-    recipe_5_preliminary_summary_by_vial.csv
-    recipe_5_excluded_frames.csv
-    recipe_5_missing_frames.csv
-    annotated_images/             Annotated Recipe 5 images
-    recipe_5_roi_montage_vial_*.jpg
-  recipe_6/
-    recipe_6_preliminary_measurements.csv
-    recipe_6_preliminary_summary_by_vial.csv
-    recipe_6_preliminary_summary_overall.csv
-    roi_examples/                Annotated Recipe 6 images and vial montages
-  recipe_7/
-    recipe_7_manual_roi_measurements.csv
-    recipe_7_preliminary_summary_by_vial.csv
-    recipe_7_excluded_frames.csv
-    annotated_images/             Annotated Recipe 7 images
-    recipe_7_roi_montage_vial_*.jpg
-  recipe_8/
-    recipe_8_manual_roi_measurements.csv
-    recipe_8_preliminary_summary_by_vial.csv
-    recipe_8_excluded_frames.csv
-    annotated_images/             Annotated Recipe 8 images
-    recipe_8_roi_montage_vial_*.jpg
-  recipe_9/
-    recipe_9_manual_roi_measurements.csv
-    recipe_9_preliminary_summary_by_vial.csv
-    recipe_9_excluded_frames.csv
-    annotated_images/             Annotated Recipe 9 images
-    recipe_9_roi_montage_vial_*.jpg
-  recipe_10/
-    recipe_10_manual_roi_measurements.csv
-    recipe_10_preliminary_summary_by_vial.csv
-    recipe_10_excluded_frames.csv
-    annotated_images/             Annotated Recipe 10 images
-    recipe_10_roi_montage_vial_*.jpg
-  recipe_11/
-    recipe_11_manual_roi_measurements.csv
-    recipe_11_preliminary_summary_by_vial.csv
-    recipe_11_excluded_frames.csv
-    recipe_11_missing_frames.csv
-    annotated_images/             Annotated Recipe 11 images
-    recipe_11_roi_montage_vial_*.jpg
-  recipe_12/
-    recipe_12_manual_roi_measurements.csv
-    recipe_12_preliminary_summary_by_vial.csv
-    recipe_12_excluded_frames.csv
-    recipe_12_missing_frames.csv
-    annotated_images/             Annotated Recipe 12 images
-    recipe_12_roi_montage_vial_*.jpg
-  recipe_13/
-    recipe_13_manual_roi_measurements.csv
-    recipe_13_preliminary_summary_by_vial.csv
-    recipe_13_excluded_frames.csv
-    recipe_13_missing_frames.csv
-    annotated_images/             Annotated Recipe 13 images
-    recipe_13_roi_montage_vial_*.jpg
-  recipe_14/
-    recipe_14_manual_roi_measurements.csv
-    recipe_14_preliminary_summary_by_vial.csv
-    recipe_14_excluded_frames.csv
-    recipe_14_missing_frames.csv
-    annotated_images/             Annotated Recipe 14 images
-    recipe_14_roi_montage_vial_*.jpg
-requirements.txt
+  recipe_5/ ... recipe_14/      Original RGB/HSV measurements and annotated examples
+  temporal_analysis/
+    recipe_5/ ... recipe_14/    Timelines, coverage plots, summaries, notes
+    recipe_8_*/                 Recipe 8 timeline and original-frame reviews
+    consolidated/               Comparison and input-coverage tables
+data/raw/                       Local labels and images; excluded from Git
+requirements.txt                Python dependencies
 ```
 
-`data/raw/` is reserved for local dataset files and is excluded from Git. Dataset ZIP archives, videos, and full collections of unannotated source images are not part of this project.
+### RGB/HSV results
 
-## Set up the environment
+Use this table to open the saved measurement CSV or the recipe's temporal page:
 
-From the repository root, create and activate a virtual environment, then install dependencies:
+| Recipe | RGB/HSV measurements | Temporal results |
+|---:|---|---|
+| 5 | [Measurement CSV](results/recipe_5/recipe_5_manual_roi_measurements.csv) | [Timeline and plots](results/temporal_analysis/recipe_5/README.md) |
+| 6 | [Measurement CSV](results/recipe_6/recipe_6_preliminary_measurements.csv) | [Timeline and plots](results/temporal_analysis/recipe_6/README.md) |
+| 7 | [Measurement CSV](results/recipe_7/recipe_7_manual_roi_measurements.csv) | [Timeline and plots](results/temporal_analysis/recipe_7/README.md) |
+| 8 | [Measurement CSV](results/recipe_8/recipe_8_manual_roi_measurements.csv) | [Timeline and plots](results/temporal_analysis/recipe_8_fill_timeline/README.md) · [Updated image review](results/temporal_analysis/recipe_8_original_image_review/README.md) |
+| 9 | [Measurement CSV](results/recipe_9/recipe_9_manual_roi_measurements.csv) | [Timeline and plots](results/temporal_analysis/recipe_9/README.md) |
+| 10 | [Measurement CSV](results/recipe_10/recipe_10_manual_roi_measurements.csv) | [Timeline and plots](results/temporal_analysis/recipe_10/README.md) |
+| 11 | [Measurement CSV](results/recipe_11/recipe_11_manual_roi_measurements.csv) | [Timeline and plots](results/temporal_analysis/recipe_11/README.md) |
+| 12 | [Measurement CSV](results/recipe_12/recipe_12_manual_roi_measurements.csv) | [Timeline and plots](results/temporal_analysis/recipe_12/README.md) |
+| 13 | [Measurement CSV](results/recipe_13/recipe_13_manual_roi_measurements.csv) | [Timeline and plots](results/temporal_analysis/recipe_13/README.md) |
+| 14 | [Measurement CSV](results/recipe_14/recipe_14_manual_roi_measurements.csv) | [Timeline and plots](results/temporal_analysis/recipe_14/README.md) |
+
+Each linked `results/recipe_N/` folder also contains summaries and selected
+annotated examples. Recipe folders commonly include:
+
+- `recipe_N_manual_roi_measurements.csv` (Recipe 6 uses
+  `recipe_6_preliminary_measurements.csv`): per-frame RGB/HSV values, labels,
+  timestamps, and ROI coordinates.
+- `recipe_N_preliminary_summary_by_vial.csv`: descriptive per-vial channel
+  statistics.
+- `recipe_N_excluded_frames.csv` and `recipe_N_missing_frames.csv`, when
+  present: frames withheld from measurement or absent from the available files.
+- `annotated_images/`, `roi_examples/`, or `recipe_N_roi_montage_vial_*.jpg`:
+  visual records of selected ROIs.
+
+Some older recipe analyses store their summary and annotated examples under
+slightly different names. The files are listed in each [recipe result folder](results/).
+
+### Temporal results
+
+Each linked temporal page contains a labeled timeline CSV, per-vial summary,
+RGB and HSV plots, frame-coverage plot, and recipe-specific notes. Recipe 8 has
+separate pages because its timeline was extended in stages; the updated image
+review is the latest summary of its 25 available values.
+
+## Setup and reproduce
+
+Use Python 3.10 or newer. From the repository root, create an environment and
+install the dependencies:
 
 ```bash
 python -m venv .venv
-. .venv/bin/activate             # Windows: .venv\Scripts\activate
+# macOS/Linux
+source .venv/bin/activate
+# Windows PowerShell instead:
+# .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
 ```
 
-In VS Code, select `.venv/bin/python` as the interpreter (on Windows, `.venv\Scripts\python.exe`).
+In VS Code, select `.venv/bin/python` (macOS/Linux) or
+`.venv\Scripts\python.exe` (Windows) as the interpreter.
 
-## Run the recipe analyses
+### Data files
 
-Place the original video 5 label CSV and vial-fill images at:
+Raw datasets are not stored in Git. Obtain the Dataset 2 labels and images
+separately. The shared video 5 label file is expected at
+`data/raw/recipe7/labels_video5_frame_labels.csv`; despite that directory name,
+it contains labels for Recipes 5–14. Image files are expected in
+`data/raw/recipeN/images/` for each recipe.
 
-```text
-data/raw/vial_fill/labels_video5_frame_labels.csv
-data/raw/vial_fill/images/
-```
+The current checkout has the original images for Recipes 5 and 7–14. Recipe 11
+has 52 of 62 labeled images; ten are documented as missing. Recipe 6's 36
+original images are not present in this checkout. A clean Git clone contains
+none of the ignored `data/raw/` files, so image-level analyses require the local
+data files to be provided first.
 
-Then run Recipe 6:
+### Re-run temporal analysis
 
-```bash
-PYTHONPATH=src python -m vialsense.recipes.recipe6_manual
-```
-
-The script selects the existing sample of 18 frames: 5 each from Vials 4 and 5, and 8 from Vial 6. It writes the measurement and summary CSV files and annotated examples under `results/recipe_6/`.
-
-For Recipe 7, place its 36 images and frame labels at:
-
-```text
-data/raw/recipe7/images/
-data/raw/recipe7/labels_video5_frame_labels.csv
-```
-
-Then run:
+This uses existing measurements; it does not re-read or measure image pixels.
+From the repository root:
 
 ```bash
-PYTHONPATH=src python -m vialsense.recipes.recipe7_manual
+python results/temporal_analysis/analyze_recipe_timelines.py
 ```
 
-The script keeps 17 manually selected samples (8 from Vial 7, 8 from Vial 8, and 1 from Vial 9). The other 19 frames and their exclusion notes are in `results/recipe_7/recipe_7_excluded_frames.csv`.
+It reads the shared labels and saved per-recipe measurement/exclusion/missing
+CSV files, then regenerates temporal outputs for Recipes 5–7 and 9–14 plus the
+consolidated comparison. Recipe 8 is read from its existing updated timeline;
+its result files are not regenerated by this script. See
+[temporal analysis details](results/temporal_analysis/README.md).
 
-### Preliminary Results: Recipe 5
+### Re-run RGB/HSV image measurements
 
-The labels describe Recipe 5 as a 30 ml even triple mixture (10 ml from each tank, dispense order `T200>T400>T100`) with purpose “mixed - low even (swapped in)”. The uploaded ZIP contained all 41 labeled images: 13 each for Vials 1 and 2, and 15 for Vial 3. There were no missing, duplicate, or extra filenames, and all images decoded at 640×480. The shared manual ROI retained 25 images: all 13 from Vial 1, 8 from Vial 2, and 4 from Vial 3. The remaining 16 frames did not show clearly measurable colored liquid in the ROI; details are in `results/recipe_5/recipe_5_excluded_frames.csv`.
-
-Run the analysis with:
+The recipe modules use the shared labels and local raw images. For example,
+Recipe 5 can be run without replacing the checked-in results by directing output
+to a temporary folder:
 
 ```bash
 PYTHONPATH=src python -m vialsense.recipes.recipe5_manual \
   --labels data/raw/recipe7/labels_video5_frame_labels.csv \
   --images data/raw/recipe5/images \
-  --output-dir results/recipe_5
+  --output-dir /tmp/vialsense-recipe5
 ```
 
-The preliminary per-vial means are:
+On Windows PowerShell, set the import path first:
 
-| Vial | Samples | Mean RGB | Mean HSV (OpenCV) |
-|---|---:|---|---|
-| 1 | 13 | (22.35, 63.83, 30.94) | (67.23, 170.28, 63.83) |
-| 2 | 8 | (24.38, 75.02, 53.60) | (77.14, 173.21, 75.02) |
-| 3 | 4 | (49.41, 58.02, 35.20) | (42.20, 100.42, 58.02) |
+```powershell
+$env:PYTHONPATH = "src"
+python -m vialsense.recipes.recipe5_manual `
+  --labels data/raw/recipe7/labels_video5_frame_labels.csv `
+  --images data/raw/recipe5/images `
+  --output-dir "$env:TEMP\vialsense-recipe5"
+```
 
-Vials 1 and 2 look green in the measured regions. Vial 3 appears more olive/yellow and has a much higher red channel, though it has only four retained frames. Fill stage, lighting, reflections, and the ROI's position near the vial base can affect these measurements. The images do not establish a cause or indicate contamination. Results remain preliminary, not validated color references or thresholds.
+Recipes 5 and 7–14 accept `--labels`, `--images`, and `--output-dir`; inspect a
+module's `--help` for its defaults and checks. Recipe 6 has a different command
+interface (`--labels`, `--images`, `--output`, `--examples`) and cannot be
+rerun from this checkout until its original images are restored. Recipe 11's
+script permits the documented missing images and checks the available set.
+Directing output to a temporary folder avoids replacing the published results.
 
-### Preliminary Results: Recipe 8
-
-The labels describe Recipe 8 as an even triple of 20 ml from each tank (60 ml total, dispense order `T200>T400>T100`). The uploaded ZIP contained 55 images. All 55 filenames matched the Recipe 8 in-fill rows in the label CSV, with 19 images for Vial 10, 18 for Vial 11, and 18 for Vial 12. All images were readable at 640×480. The analysis uses the same fixed manual ROI as Recipes 6 and 7 and retains frames where visible colored liquid is inside that ROI: 3 from Vial 10, 8 from Vial 11, and 13 from Vial 12. The other 31 frames and their exclusion notes are listed in `results/recipe_8/recipe_8_excluded_frames.csv`.
-
-Run the analysis with:
+After restoring the Recipe 6 images under `data/raw/recipe6/images/`, its
+command is:
 
 ```bash
-PYTHONPATH=src python -m vialsense.recipes.recipe8_manual \
+PYTHONPATH=src python -m vialsense.recipes.recipe6_manual \
   --labels data/raw/recipe7/labels_video5_frame_labels.csv \
-  --images data/raw/recipe8/images \
-  --output-dir results/recipe_8
+  --images data/raw/recipe6/images \
+  --output /tmp/vialsense-recipe6/recipe_6_preliminary_measurements.csv \
+  --examples /tmp/vialsense-recipe6/examples
 ```
 
-The preliminary per-vial means are:
+Recipe 8's `recipe8_manual` module reproduces its original 24 fixed-ROI values.
+The later 25-value temporal CSV also contains one cautious relocated-ROI
+measurement; it is documented separately and is not generated by that module.
 
-| Vial | Samples | Mean RGB | Mean HSV (OpenCV) |
-|---|---:|---|---|
-| 10 | 3 | (5.90, 38.31, 54.79) | (100.21, 229.31, 54.79) |
-| 11 | 8 | (7.72, 41.14, 58.49) | (100.27, 222.55, 58.49) |
-| 12 | 13 | (7.57, 43.93, 62.71) | (98.49, 216.83, 63.13) |
+## Limitations and appropriate use
 
-The selected regions look blue across the three vials. Vials 10 and 11 have similar sampled averages. Vial 12 is more variable: its first 10 selected frames average RGB (6.20, 47.38, 71.39), while its last 3 selected frames average (12.00, 32.26, 33.70) and look darker and more teal/green. Fill stage, liquid motion or mixing, glass/reflections, and ROI optics could affect this change; these images do not establish its cause. These measurements remain preliminary and are not validated reference colors or contamination thresholds.
+- The camera framing and ROI are not automatically adapted to a moving vial.
+- ROI pixels can include glass, reflections, supports, or changing amounts of
+  liquid. Sample coverage and time spacing vary by vial.
+- Recipe 8 has one extra relocated-ROI measurement marked cautious; it is not
+  directly comparable to its fixed-ROI samples.
+- Lighting and camera settings are not calibrated. Recipe labels and
+  `color_purpose` descriptions do not verify that a vial was a known-good
+  product.
+- The repository has no confirmed contamination labels, controlled
+  good/bad-run dataset, or validated acceptance limits.
 
-### Preliminary Results: Recipe 9
-
-The labels describe Recipe 9 as an 80 ml triple mixture (10 ml T100, 35 ml T200, and 35 ml T400; dispense order `T200>T400>T100`) with the purpose “dark saturated (low clear)”. The uploaded ZIP contained 70 images. All 70 filenames matched the Recipe 9 in-fill rows in the label CSV, and all were readable at 640×480. Using the same fixed manual ROI, the analysis retains 59 frames with visible liquid: 17 from Vial 13, 18 from Vial 14, and all 24 from Vial 15. The remaining 11 frames show Vials 13 or 14 moving away from the fixed ROI and are listed with reasons in `results/recipe_9/recipe_9_excluded_frames.csv`.
-
-Run the analysis with:
-
-```bash
-PYTHONPATH=src python -m vialsense.recipes.recipe9_manual \
-  --labels data/raw/recipe7/labels_video5_frame_labels.csv \
-  --images data/raw/recipe9/images \
-  --output-dir results/recipe_9
-```
-
-The preliminary per-vial means are:
-
-| Vial | Samples | Mean RGB | Mean HSV (OpenCV) |
-|---|---:|---|---|
-| 13 | 17 | (15.95, 27.66, 23.46) | (79.57, 111.85, 27.67) |
-| 14 | 18 | (15.87, 25.14, 21.37) | (80.64, 99.78, 25.44) |
-| 15 | 24 | (15.46, 24.31, 19.97) | (74.78, 99.50, 24.33) |
-
-The sampled liquid is very dark and greenish across all three vials. Vials 13 and 14 have similar averages. Vial 15 shifts toward a darker olive/yellow-green appearance in its last 8 frames: their mean RGB is (17.65, 23.51, 17.83), compared with (14.36, 24.70, 21.04) across its first 16 frames. The mean OpenCV V value is only about 24–28, so small reflections, glass, and image noise can have a noticeable effect on hue and saturation. Fill stage or optical effects may contribute; the images do not establish the cause. These measurements are preliminary, not validated color references or contamination thresholds.
-
-### Preliminary Results: Recipe 10
-
-The labels describe Recipe 10 as a 75 ml triple mixture (45 ml T100, 15 ml T200, and 15 ml T400; dispense order `T200>T400>T100`) with the purpose “pale wash (high clear)”. The uploaded ZIP contained 57 images. All 57 filenames matched the Recipe 10 in-fill rows in the label CSV, and all were readable at 640×480. Using the same fixed manual ROI, the analysis retains 38 frames with visible liquid: 14 from Vial 16, 5 from Vial 17, and 19 from Vial 18. The other 19 frames and their exclusion reasons are listed in `results/recipe_10/recipe_10_excluded_frames.csv`.
-
-Run the analysis with:
-
-```bash
-PYTHONPATH=src python -m vialsense.recipes.recipe10_manual \
-  --labels data/raw/recipe7/labels_video5_frame_labels.csv \
-  --images data/raw/recipe10/images \
-  --output-dir results/recipe_10
-```
-
-The preliminary per-vial means are:
-
-| Vial | Samples | Mean RGB | Mean HSV (OpenCV) |
-|---|---:|---|---|
-| 16 | 14 | (24.08, 36.09, 30.84) | (79.11, 104.29, 36.14) |
-| 17 | 5 | (16.49, 23.40, 19.35) | (73.56, 81.15, 23.40) |
-| 18 | 19 | (13.68, 22.30, 19.85) | (81.99, 102.13, 22.40) |
-
-Most retained frames look very dark green, which differs from the label description “pale wash”. Vials 17 and 18 have similarly dark averages. Vial 16's first retained frame is a lighter, low-saturation transition (RGB 93.13, 101.46, 77.47; OpenCV HSV 40.37, 60.56, 101.46); its remaining 13 frames average RGB (18.77, 31.06, 27.25) and look dark green. That visible transition frame raises Vial 16's overall mean. Fill stage, mixing, reflections, and the glass can affect these measurements. The images do not establish the cause or show contamination. Results remain preliminary, not validated reference colors or thresholds.
-
-### Preliminary Results: Recipe 11
-
-The label CSV contains 62 in-fill images: 20 for Vial 19, 21 for Vial 20, and 21 for Vial 21. The uploaded ZIP contains 52 readable images at 640×480. All 52 filenames match Recipe 11 labels and there are no extra filenames from other recipes. Ten labeled images were absent; their exact names are in `results/recipe_11/recipe_11_missing_frames.csv`. The reviewed shared manual ROI retains 19 images (14 from Vial 19, 3 from Vial 20, and 2 from Vial 21); 33 available images without visible liquid in that region or after the vial moved are documented in `recipe_11_excluded_frames.csv`.
-
-Run the analysis with:
-
-```bash
-PYTHONPATH=src python -m vialsense.recipes.recipe11_manual \
-  --labels data/raw/recipe7/labels_video5_frame_labels.csv \
-  --images data/raw/recipe11/images \
-  --output-dir results/recipe_11
-```
-
-The preliminary per-vial means are:
-
-| Vial | Samples | Mean RGB | Mean HSV (OpenCV) |
-|---|---:|---|---|
-| 19 | 14 | (17.86, 28.22, 26.23) | (84.95, 102.35, 28.56) |
-| 20 | 3 | (43.79, 43.48, 22.05) | (29.75, 128.57, 44.24) |
-| 21 | 2 | (59.90, 63.43, 47.40) | (38.17, 77.79, 63.43) |
-
-The measured regions vary visibly: Vial 19 appears darker and greener/teal, while the few retained images from Vials 20 and 21 appear brighter and more olive/yellow. The label CSV does not provide a color-purpose description. Vials 20 and 21 have only three and two measurements, respectively, so their means are especially tentative. The ROI is close to the vial base and support, where glass and reflections can affect pixel values; the images do not establish why the samples differ and do not show that contamination occurred. These measurements are preliminary, not validated color references or thresholds.
-
-### Preliminary Results: Recipe 12
-
-The label CSV describes Recipe 12 as a 70 ml triple mixture (10 ml T100, 50 ml T200, and 10 ml T400; dispense order `T200>T400>T100`). The uploaded ZIP contains 65 images: 21 for Vial 22, 22 for Vial 23, and 22 for Vial 24. All filenames match the Recipe 12 in-fill labels, with no missing images or extra files from another recipe. All images were readable at 640×480. Visual review of the shared manual ROI retained 15 images: 2 from Vial 22, 6 from Vial 23, and 7 from Vial 24. The other 50 frames and their exclusion notes are in `results/recipe_12/recipe_12_excluded_frames.csv`.
-
-Run the analysis with:
-
-```bash
-PYTHONPATH=src python -m vialsense.recipes.recipe12_manual \
-  --labels data/raw/recipe7/labels_video5_frame_labels.csv \
-  --images data/raw/recipe12/images \
-  --output-dir results/recipe_12
-```
-
-The preliminary per-vial means are:
-
-| Vial | Samples | Mean RGB | Mean HSV (OpenCV) |
-|---|---:|---|---|
-| 22 | 2 | (31.10, 33.82, 20.38) | (36.56, 98.84, 33.82) |
-| 23 | 6 | (24.33, 38.96, 27.12) | (65.41, 102.23, 38.96) |
-| 24 | 7 | (14.26, 27.15, 26.82) | (89.50, 125.42, 27.40) |
-
-The selected regions look olive/yellow-green in Vial 22, greener in Vial 23, and more cyan/teal in Vial 24. Vial 22 has only two retained frames, so its mean is especially uncertain. Fill stage, illumination, liquid motion, reflections, and the vial glass can affect these pixels; the measurements do not establish why the vials differ or indicate contamination. They remain preliminary and are not validated color references or thresholds.
-
-### Preliminary Results: Recipe 13
-
-The label CSV describes Recipe 13 as a 70 ml pair of T200 (50 ml) and T400 (20 ml), dispensed in `T200>T400` order. The ZIP contains all 55 labeled images: 19 from Vial 25, 18 from Vial 26, and 18 from Vial 27. There are no missing or extra filenames, and all images decode at 640×480. Visual review of the shared manual ROI retained 42 images: 10 from Vial 25, all 18 from Vial 26, and 14 from Vial 27. The other 13 frames and their exclusion notes are in `results/recipe_13/recipe_13_excluded_frames.csv`.
-
-Run the analysis with:
-
-```bash
-PYTHONPATH=src python -m vialsense.recipes.recipe13_manual \
-  --labels data/raw/recipe7/labels_video5_frame_labels.csv \
-  --images data/raw/recipe13/images \
-  --output-dir results/recipe_13
-```
-
-The preliminary per-vial means are:
-
-| Vial | Samples | Mean RGB | Mean HSV (OpenCV) |
-|---|---:|---|---|
-| 25 | 10 | (12.62, 27.74, 27.25) | (89.28, 142.24, 27.96) |
-| 26 | 18 | (14.21, 24.64, 21.96) | (82.28, 109.57, 24.65) |
-| 27 | 14 | (38.62, 24.37, 16.49) | (10.33, 144.88, 38.62) |
-
-Vials 25 and 26 look dark teal/green in the selected regions. Vial 27 looks orange/brown and has a much higher red channel, an unusual difference for samples with the same recipe label. The images do not establish why they differ or indicate contamination. Lighting, fill stage, liquid motion, reflections, glass, and the small samples can affect the measurements. Results are preliminary, not validated reference colors or thresholds.
-
-### Preliminary Results: Recipe 14
-
-The label CSV describes Recipe 14 as a 70 ml pair of T100 (60 ml) and T400 (10 ml), dispensed in `T400>T100` order. The ZIP contains all 32 labeled images: 11 from Vial 28, 10 from Vial 29, and 11 from Vial 30. There are no missing or extra filenames, and all images decode at 640×480. The shared manual ROI retained 14 images with visible colored liquid: 10 from Vial 29 and 4 from Vial 30. Vial 28 had no distinguishable colored liquid in the ROI; its 11 frames and the 7 other excluded frames are documented in `results/recipe_14/recipe_14_excluded_frames.csv`.
-
-Run the analysis with:
-
-```bash
-PYTHONPATH=src python -m vialsense.recipes.recipe14_manual \
-  --labels data/raw/recipe7/labels_video5_frame_labels.csv \
-  --images data/raw/recipe14/images \
-  --output-dir results/recipe_14
-```
-
-The preliminary per-vial means for retained images are:
-
-| Vial | Samples | Mean RGB | Mean HSV (OpenCV) |
-|---|---:|---|---|
-| 29 | 10 | (50.12, 26.18, 14.71) | (9.62, 179.55, 50.12) |
-| 30 | 4 | (101.45, 49.21, 22.20) | (9.74, 199.55, 101.45) |
-
-The measured liquid in both retained vials looks orange/brown. Vial 30's four late frames are much brighter than Vial 29's ten frames. Vial 28 could not be compared because the fixed ROI showed no clearly colored liquid. Fill stage, lighting, reflections, and vial glass may affect these values; the images do not establish a cause or indicate contamination. These measurements are preliminary, not validated reference colors or thresholds.
-
-All recipe commands accept path overrides. Run a command with `--help` to see the options. Outputs are saved in their recipe-specific result folders by default.
-
-## Reusable functions for integration
-
-The shared function `vialsense.manual_roi.measure_roi` takes an image path and a rectangle `(x1, y1, x2, y2)` in pixel coordinates. It returns mean RGB and OpenCV HSV values. Example:
-
-```python
-from pathlib import Path
-from vialsense.manual_roi import measure_roi
-
-# This is the prototype ROI for the current 640x480 camera view.
-roi = (304, 384, 328, 400)
-values = measure_roi(Path("frame.jpg"), roi)
-rgb = (values["r_mean"], values["g_mean"], values["b_mean"])
-hsv_opencv = (
-    values["h_mean_opencv"],
-    values["s_mean_opencv"],
-    values["v_mean_opencv"],
-)
-```
-
-If an integrated detection system already locates the vial and liquid, it can provide the corresponding image and ROI to this function, or reuse the RGB/HSV calculation with its own detected region. The Recipe 6 and Recipe 7 CSV files can also be loaded with pandas to inspect sampled measurements. The `dataset.load_labeled_frames` function is available for matching one recipe's label rows to local images.
-
-The current ROI coordinates are tied to the existing 640x480 camera framing. They must be adapted or replaced by a validated vial/liquid region from the integrated system if the camera, resolution, position, or framing changes. `color.py` contains an experimental heuristic based on orange/brown pixels; it is not a general-purpose detector and should not be treated as validated for Recipe 7 or production use.
-
-## Reading the measurements
-
-The measurement CSVs contain one row per selected image, including its filename, recipe/vial labels, ROI coordinates, and channel averages. The summary CSVs report descriptive per-vial or combined statistics for those selected images.
-
-RGB channels use the usual 0–255 scale. OpenCV HSV uses H from 0–179 and S/V from 0–255. These are camera pixel values, so lighting, camera exposure/white balance, vial glass, reflections, liquid depth, and fill stage can change them.
-
-Recipe 6 includes 18 samples from three vials. Recipe 7 includes 17 samples, with only one usable measurement from Vial 9. Recipe 7's label says “pale blue”, while the selected images from Vials 7 and 8 appear orange/brown and the one selected Vial 9 frame appears blue. The reason for this difference has not been established. The results must not be used to claim contamination or define a pass/fail threshold.
-
-Before using these measurements for detection, collect and review more representative images at comparable fill stages and under controlled camera/lighting conditions. The project team can then establish a validated recipe reference and decision logic. No thresholds are defined by this prototype.
-
-## Development branch
-
-Continue recipe work on the existing project branch, `color-analysis`. Each recipe has a separate result folder within the same project; no per-recipe branches are needed.
+The results are useful for learning, visual review, and planning a future
+detector. Do not use them alone to label a vial contaminated or make a
+production decision. A validated detector would need controlled imaging,
+repeated known-good runs, known deviations with ground truth, and an evaluated
+liquid/vial localization method.

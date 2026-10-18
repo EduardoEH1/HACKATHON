@@ -3,10 +3,8 @@ __pycache__/
 *.py[cod]
 data/
 outputs/*
-!outputs/recipe_6_preliminary_measurements.csv
-!outputs/recipe_6_preliminary_summary_by_vial.csv
-!outputs/recipe_6_preliminary_summary_overall.csv
-!outputs/recipe_6_roi_examples/
-outputs/recipe_6_roi_examples/*
-!outputs/recipe_6_roi_examples/vial_fill_*.jpg
-!outputs/recipe_6_roi_examples/montage_vial_*.jpg
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.DS_Store
+Thumbs.db

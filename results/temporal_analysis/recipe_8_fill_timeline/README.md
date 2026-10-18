@@ -1,5 +1,7 @@
 # Recipe 8 timeline anchored to labeled in-fill frames
 
+[Project overview](../../../README.md) · [Temporal analysis guide](../README.md) · [Original RGB/HSV measurements](../../recipe_8/recipe_8_manual_roi_measurements.csv)
+
 This add-on uses the original video labels, the preliminary measurement CSV,
 and the excluded-frame CSV to place measured colors within each vial's complete
 **labeled in-fill interval**. It does not change the earlier temporal analysis
@@ -68,12 +70,12 @@ inferred from this timeline alone.
 
 ## Limitations and next useful data
 
-The 55 image files themselves are not present in the current raw-data folder;
-the selected annotated examples and CSV measurements are available. Since the
-31 excluded image files are absent here, they cannot be inspected or measured
-again in this environment. To follow color through each full fill, provide the
-original images for those excluded frames and use a ROI that tracks the vial
-and liquid while avoiding supports and reflections. For reliable process-time
-alignment, record a verified dispense-start/end event or frame-level fill
-phase/volume label alongside the images. The timestamps and current
-measurements remain preliminary and are not anomaly thresholds.
+The current workspace has the 55 extracted images under
+`data/raw/recipe8/images/`, but `data/raw/` is excluded from Git, so a fresh clone
+does not contain them. This timeline script reads the labels and existing CSVs,
+not the images. To inspect the excluded frames or repeat the original-image
+review, obtain the image files (and provide the ZIP to that review script).
+For reliable process-time alignment, record a verified dispense-start/end
+event or frame-level fill phase/volume label alongside the images. The
+timestamps and current measurements remain preliminary and are not anomaly
+thresholds.
