@@ -1,6 +1,6 @@
 # VialSense
 
-VialSense is a small Python prototype for measuring visible liquid color in vial images. It uses OpenCV, NumPy, and pandas. The current work covers preliminary manual-ROI measurements for Recipes 6 and 7.
+VialSense is a small Python prototype for measuring visible liquid color in vial images. It uses OpenCV, NumPy, and pandas. The current work covers preliminary manual-ROI measurements for Recipes 6, 7, and 8.
 
 > **Status:** Every measurement in this repository is preliminary. The CSV summaries describe the sampled images only. They are not validated color references, acceptance limits, or contamination thresholds.
 
@@ -14,6 +14,7 @@ src/vialsense/
   recipes/
     recipe6_manual.py            Recipe 6 sample selection and result generation
     recipe7_manual.py            Recipe 7 sample selection and result generation
+    recipe8_manual.py            Recipe 8 sample selection and result generation
 results/
   recipe_6/
     recipe_6_preliminary_measurements.csv
@@ -26,6 +27,12 @@ results/
     recipe_7_excluded_frames.csv
     annotated_images/             Annotated Recipe 7 images
     recipe_7_roi_montage_vial_*.jpg
+  recipe_8/
+    recipe_8_manual_roi_measurements.csv
+    recipe_8_preliminary_summary_by_vial.csv
+    recipe_8_excluded_frames.csv
+    annotated_images/             Annotated Recipe 8 images
+    recipe_8_roi_montage_vial_*.jpg
 requirements.txt
 ```
 
@@ -75,7 +82,30 @@ PYTHONPATH=src python -m vialsense.recipes.recipe7_manual
 
 The script keeps 17 manually selected samples (8 from Vial 7, 8 from Vial 8, and 1 from Vial 9). The other 19 frames and their exclusion notes are in `results/recipe_7/recipe_7_excluded_frames.csv`.
 
-Both commands accept path overrides. Run a command with `--help` to see its options. Outputs are saved in their recipe-specific result folders by default.
+### Preliminary Results: Recipe 8
+
+The labels describe Recipe 8 as an even triple of 20 ml from each tank (60 ml total, dispense order `T200>T400>T100`). The uploaded ZIP contained 55 images. All 55 filenames matched the Recipe 8 in-fill rows in the label CSV, with 19 images for Vial 10, 18 for Vial 11, and 18 for Vial 12. All images were readable at 640×480. The analysis uses the same fixed manual ROI as Recipes 6 and 7 and retains frames where visible colored liquid is inside that ROI: 3 from Vial 10, 8 from Vial 11, and 13 from Vial 12. The other 31 frames and their exclusion notes are listed in `results/recipe_8/recipe_8_excluded_frames.csv`.
+
+Run the analysis with:
+
+```bash
+PYTHONPATH=src python -m vialsense.recipes.recipe8_manual \
+  --labels data/raw/recipe7/labels_video5_frame_labels.csv \
+  --images data/raw/recipe8/images \
+  --output-dir results/recipe_8
+```
+
+The preliminary per-vial means are:
+
+| Vial | Samples | Mean RGB | Mean HSV (OpenCV) |
+|---|---:|---|---|
+| 10 | 3 | (5.90, 38.31, 54.79) | (100.21, 229.31, 54.79) |
+| 11 | 8 | (7.72, 41.14, 58.49) | (100.27, 222.55, 58.49) |
+| 12 | 13 | (7.57, 43.93, 62.71) | (98.49, 216.83, 63.13) |
+
+The selected regions look blue across the three vials. Vials 10 and 11 have similar sampled averages. Vial 12 is more variable: its first 10 selected frames average RGB (6.20, 47.38, 71.39), while its last 3 selected frames average (12.00, 32.26, 33.70) and look darker and more teal/green. Fill stage, liquid motion or mixing, glass/reflections, and ROI optics could affect this change; these images do not establish its cause. These measurements remain preliminary and are not validated reference colors or contamination thresholds.
+
+All three commands accept path overrides. Run a command with `--help` to see its options. Outputs are saved in their recipe-specific result folders by default.
 
 ## Reusable functions for integration
 
@@ -112,4 +142,4 @@ Before using these measurements for detection, collect and review more represent
 
 ## Development branch
 
-Continue recipe work on the existing project branch, `vialsense-recipe6-prototype`. Recipes 6 and 7 are organized as separate result folders within the same project; no per-recipe branches are needed.
+Continue recipe work on the existing project branch, `color-analysis`. Each recipe has a separate result folder within the same project; no per-recipe branches are needed.
