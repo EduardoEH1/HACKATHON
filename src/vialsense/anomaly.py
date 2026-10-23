@@ -160,6 +160,7 @@ def score_measurement(
         "stage": None, "anomaly_score": None, "status": None, "reason": None,
         "distance_percent": None, "reference_limit_percent": None,
         "reference_samples": 0, "reference_vials": 0,
+        "reference_vial_id": None, "reference_status": None,
     }
     if not liquid_visible or not measurement_reliable:
         result.update(status="unreliable_measurement", reason="liquid not visible or ROI/measurement not reliable")
@@ -183,6 +184,11 @@ def score_measurement(
     if recipe is None:
         result.update(status="unknown_recipe", reason="recipe has no saved profile")
         return result
+    reference_vials = model.get("reference_vials", {})
+    reference_vial_id = reference_vials.get(str(recipe_id))
+    if reference_vial_id is not None:
+        result.update(reference_vial_id=int(reference_vial_id),
+                      reference_status="provisional; not confirmed normal")
     entry = recipe[stage]
     result["reference_samples"] = entry["samples"]
     result["reference_vials"] = entry["vials"]

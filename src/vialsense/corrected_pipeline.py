@@ -204,6 +204,7 @@ def fit_corrected_model(fill: pd.DataFrame, vials: pd.DataFrame) -> dict[str, An
     if set(model["recipes"]) != {str(r) for r in range(5, 15)}:
         raise ValueError("at least one recipe lacks a final-vial reference")
     model["reference_selection"] = "last vial per recipe; assumed most flushed, not confirmed good"
+    model["reference_status"] = "provisional; not confirmed normal"
     model["measurement_method"] = "Salah liquid_finder high-confidence video ROI"
     model["time_method"] = "video_s and vial fill windows; fill_progress 0..1"
     model["source_color_check_commit"] = SOURCE_COMMIT
@@ -232,6 +233,8 @@ def evaluate_corrected(fill: pd.DataFrame, model: dict[str, Any]) -> tuple[pd.Da
             "reason": score["reason"], "stage": score.get("stage"),
             "reference_samples": score.get("reference_samples"),
             "reference_vials": score.get("reference_vials"),
+            "reference_vial_id": score.get("reference_vial_id"),
+            "reference_status": score.get("reference_status"),
         })
     predictions = pd.DataFrame(rows)
     summaries = []
@@ -279,4 +282,11 @@ def save_reference_model(model: dict[str, Any], path: Path) -> None:
 
 
 def reference_summary(model: dict[str, Any]) -> pd.DataFrame:
-    return summarize_profiles(model)
+    summary = summarize_profiles(model)
+    summary["reference_vial_id"] = summary.recipe_id.map(
+        {int(recipe): int(vial) for recipe, vial in model.get("reference_vials", {}).items()}
+    )
+    summary["reference_status"] = model.get(
+        "reference_status", "provisional; not confirmed normal"
+    )
+    return summary

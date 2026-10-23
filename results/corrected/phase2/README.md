@@ -15,6 +15,13 @@ fitting and the review-boundary calculation. Each stage needs at least four
 high-confidence measurements from that last vial. The RGB/S/V center is a
 median and hue uses a circular center.
 
+The reference table and each scored frame/CLI response now name the specific
+`reference_vial_id` and label it `provisional; not confirmed normal`. In the
+JSON model, `reference_vials` maps recipe IDs to the chosen vial IDs; the
+per-stage `vial_ids` field also identifies the source. `reference_vials` in a
+score response remains a count of contributing vials, so use
+`reference_vial_id` to see which vial supplied the reference.
+
 The detector uses the existing Phase 2 RGB/HSV distance formula. It divides
 the distance by a provisional stage limit and multiplies by 100. The limit is
 at least the 95th percentile of variation in that last vial's stage and a
@@ -78,10 +85,18 @@ PYTHONPATH=src python -m vialsense.corrected_cli score \
 ```
 
 The `score` command returns JSON with `anomaly_score`, `status`, `stage`,
-reference sample count, and reason. `reading.json` must contain the six color
-fields, `found_vial`, `found_liquid`, and `confidence`. The `score` command
-also accepts `--reading-file`. The machine recipe and fill progress are
-required; a camera timestamp alone cannot supply them.
+`reference_vial_id`, `reference_status`, reference sample count, and reason.
+`reading.json` must contain the six color fields, `found_vial`, `found_liquid`,
+and `confidence`. The `score` command also accepts `--reading-file`. The
+machine recipe and fill progress are required; a camera timestamp alone cannot
+supply them.
+
+The integration check replays a high-confidence row from the saved
+`frame_colors.csv` through the same adapter and CLI used for live readings.
+It validates detector-output-to-score wiring and abstention behavior. A live
+camera session still needs Salah's running capture/detection code and a source
+of current recipe/fill progress; this workspace does not contain a live camera
+feed or the original video file.
 
 Do not compare these video-ROI measurements to the old fixed-ROI Phase 2
 model. The color distributions and clock labels differ. To improve the model,

@@ -1,6 +1,10 @@
 """Checks against the saved Dataset 2/auto-finder CSV snapshots."""
 
 import unittest
+import json
+import os
+import subprocess
+import sys
 from pathlib import Path
 
 from vialsense.anomaly import CHANNELS, score_measurement
@@ -89,9 +93,36 @@ class CorrectedPipelineTests(unittest.TestCase):
                                           fill_progress=float(row.fill_progress))
         self.assertEqual(live_result["status"], direct["status"])
         self.assertEqual(live_result["timestamp"], "123.45")
+        self.assertEqual(live_result["reference_vial_id"], self.model["reference_vials"]["9"])
+        self.assertEqual(live_result["reference_status"], "provisional; not confirmed normal")
         live["confidence"] = "low"
         self.assertEqual(score_salah_reading(self.model, live, recipe_id=9,
                                              fill_progress=0.5)["status"], "unreliable_measurement")
+
+    def test_cli_scores_saved_liquid_finder_output_end_to_end(self):
+        row = self.fill[(self.fill.recipe_id == 9) & self.fill.usable_measurement].iloc[0]
+        reading = {key: (row[key].item() if hasattr(row[key], "item") else row[key]) for key in (
+            *CHANNELS, "found_vial", "found_liquid", "confidence", "video_s",
+        )}
+        expected = score_salah_reading(
+            self.model, reading, recipe_id=9, fill_progress=float(row.fill_progress),
+            timestamp=f"video5:{float(row.video_s):.3f}s",
+        )
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(ROOT / "src")
+        completed = subprocess.run(
+            [sys.executable, "-m", "vialsense.corrected_cli", "score",
+             "--model", str(ROOT / "results/corrected/phase2/provisional_model.json"),
+             "--recipe-id", "9", "--progress", str(float(row.fill_progress)),
+             "--timestamp", f"video5:{float(row.video_s):.3f}s"],
+            input=json.dumps(reading), text=True, capture_output=True,
+            cwd=ROOT, env=env, check=True,
+        )
+        actual = json.loads(completed.stdout)
+        self.assertEqual(actual["anomaly_score"], expected["anomaly_score"])
+        self.assertEqual(actual["status"], expected["status"])
+        self.assertEqual(actual["reference_vial_id"], self.model["reference_vials"]["9"])
+        self.assertEqual(actual["reference_status"], "provisional; not confirmed normal")
 
     def test_evaluation_scores_only_reliable_rows(self):
         predictions, summary = evaluate_corrected(self.fill, self.model)
