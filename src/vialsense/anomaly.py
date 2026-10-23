@@ -56,12 +56,18 @@ def color_distance(sample: np.ndarray, center: np.ndarray) -> float:
     return float(np.sqrt(np.mean(differences**2)))
 
 
-def fit_model(measurements: pd.DataFrame) -> dict[str, Any]:
+def fit_model(
+    measurements: pd.DataFrame, *, min_stage_samples: int = MIN_STAGE_SAMPLES,
+    min_stage_vials: int = MIN_STAGE_VIALS,
+    min_distance_percent: float = MIN_DISTANCE_PERCENT,
+) -> dict[str, Any]:
     """Fit one provisional three-stage profile for each recipe in a data frame.
 
     Required columns: recipe_id, vial, fill_progress, and CHANNELS. Only
     caller-approved, reliable measurements should be passed here.
     """
+    if min_stage_samples < 1 or min_stage_vials < 1 or min_distance_percent <= 0:
+        raise ValueError("reference requirements and distance floor must be positive")
     required = {"recipe_id", "vial", "fill_progress", *CHANNELS}
     missing = required - set(measurements.columns)
     if missing:
@@ -89,7 +95,7 @@ def fit_model(measurements: pd.DataFrame) -> dict[str, Any]:
             entry: dict[str, Any] = {
                 "samples": int(len(rows)), "vials": n_vials,
                 "vial_ids": sorted(int(v) for v in rows.vial.unique()),
-                "available": len(rows) >= MIN_STAGE_SAMPLES and n_vials >= MIN_STAGE_VIALS,
+                "available": len(rows) >= min_stage_samples and n_vials >= min_stage_vials,
             }
             if entry["available"]:
                 matrix = rows[list(CHANNELS)].to_numpy(float)
@@ -99,25 +105,28 @@ def fit_model(measurements: pd.DataFrame) -> dict[str, Any]:
                 # captures between-vial variation that an in-sample median
                 # would otherwise hide. No held-out evaluation vial is used.
                 cross_vial = []
-                for vial in rows.vial.unique():
-                    others = rows.loc[rows.vial != vial, list(CHANNELS)].to_numpy(float)
-                    own = rows.loc[rows.vial == vial, list(CHANNELS)].to_numpy(float)
-                    other_center = _center(others)
-                    cross_vial.extend(color_distance(sample, other_center) for sample in own)
+                if n_vials > 1:
+                    for vial in rows.vial.unique():
+                        others = rows.loc[rows.vial != vial, list(CHANNELS)].to_numpy(float)
+                        own = rows.loc[rows.vial == vial, list(CHANNELS)].to_numpy(float)
+                        other_center = _center(others)
+                        cross_vial.extend(color_distance(sample, other_center) for sample in own)
                 within_q95 = float(np.quantile(distances, 0.95))
-                cross_vial_q95 = float(np.quantile(cross_vial, 0.95))
+                cross_vial_q95 = float(np.quantile(cross_vial, 0.95)) if cross_vial else None
                 entry["center"] = [float(value) for value in center]
                 entry["within_q95"] = within_q95
                 entry["cross_vial_q95"] = cross_vial_q95
-                entry["reference_limit"] = float(max(within_q95, cross_vial_q95, MIN_DISTANCE_PERCENT))
+                entry["reference_limit"] = float(max(within_q95, cross_vial_q95 or 0, min_distance_percent))
             stages[stage] = entry
         recipes[str(int(recipe_id))] = stages
     return {
         "model_version": 1,
-        "method": "three equal label-time stages; RGB/HSV channel distance; training and cross-vial 95th percentiles",
-        "min_stage_samples": MIN_STAGE_SAMPLES,
-        "min_stage_vials": MIN_STAGE_VIALS,
-        "min_distance_percent": MIN_DISTANCE_PERCENT,
+        "method": ("three equal label-time stages; RGB/HSV channel distance; training and cross-vial 95th percentiles"
+                   if min_stage_vials > 1 else
+                   "three equal video-time stages; RGB/HSV channel distance; single-reference-vial 95th percentile"),
+        "min_stage_samples": min_stage_samples,
+        "min_stage_vials": min_stage_vials,
+        "min_distance_percent": min_distance_percent,
         "review_score": REVIEW_SCORE,
         "recipes": recipes,
     }
@@ -178,7 +187,13 @@ def score_measurement(
     result["reference_samples"] = entry["samples"]
     result["reference_vials"] = entry["vials"]
     if not entry["available"]:
-        result.update(status="insufficient_reference", reason="stage needs at least four samples from two vials")
+        min_samples = model["min_stage_samples"]
+        min_vials = model["min_stage_vials"]
+        reason = ("stage needs at least four samples from two vials"
+                  if (min_samples, min_vials) == (4, 2)
+                  else f"stage needs at least {min_samples} samples from {min_vials} vial(s)")
+        result.update(status="insufficient_reference",
+                      reason=reason)
         return result
     distance = color_distance(values, np.asarray(entry["center"], dtype=float))
     score = 100 * distance / entry["reference_limit"]

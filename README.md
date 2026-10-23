@@ -1,5 +1,12 @@
 # VialSense color analysis
 
+> **Corrected Dataset 2 analysis:** The original still-image labels used the
+> wrong time scale for vial fill windows. The original Phase 1 and Phase 2
+> results below are retained as historical outputs. For current Recipe 5–14
+> video-time color summaries, timelines, and provisional anomaly references,
+> start with the [corrected results](results/corrected/README.md). This work is
+> on the local `color-analysis-corrected-labels` branch.
+
 VialSense is a Python prototype for describing the visible color of liquids in
 vials from images recorded at a fluid mixing station. The work supports a
 future camera-based check that a vial's observed color is consistent with its
@@ -13,6 +20,10 @@ assigned recipe.
 
 ## Current progress
 
+The bullets below describe the preserved original analysis. The corrected
+version uses Salah's automatic liquid ROI consistently across all 30 vials;
+see its [method and coverage](results/corrected/README.md).
+
 - Preliminary RGB and OpenCV HSV measurements are available for Recipes 5–14.
 - Temporal plots and labeled-frame coverage summaries are available for all ten
   recipes. The Recipe 8 temporal work includes an additional cautious sample
@@ -24,12 +35,14 @@ assigned recipe.
 - Analyses use selected frames and manually reviewed fixed regions of interest
   (ROIs). They describe the recorded pixels; they do not determine why vials or
   time points differ.
-- The checked-in branch is `color-analysis`.
+- The original analysis is preserved on the `color-analysis` branch and in the
+  historical result folders here.
 
 ## Start here
 
 | I want to… | Start with |
 |---|---|
+| See the corrected analysis and integration instructions | [Corrected results](results/corrected/README.md) |
 | See the overall temporal comparison and coverage | [Consolidated comparison](results/temporal_analysis/consolidated/README.md) |
 | Find a recipe's timeline, plots, and per-vial summary | [Recipe temporal results](#temporal-results) |
 | Understand the original per-recipe RGB/HSV measurements | [Recipe result folders](#rgbhsv-results) |
@@ -98,6 +111,8 @@ results/
     recipe_8_*/                 Recipe 8 timeline and original-frame reviews
     consolidated/               Comparison and input-coverage tables
   anomaly_detection/            Phase 2 model and held-out evaluation CSVs
+  corrected/                    Separate corrected labels audit, Phase 1, and Phase 2
+inputs/color_check/              Snapshots of corrected labels and video measurements
 data/raw/                       Local labels and images; excluded from Git
 tests/                          Phase 2 checks using checked-in CSV data
 requirements.txt                Python dependencies
@@ -168,11 +183,10 @@ separately. The shared video 5 label file is expected at
 it contains labels for Recipes 5–14. Image files are expected in
 `data/raw/recipeN/images/` for each recipe.
 
-The current checkout has the original images for Recipes 5 and 7–14. Recipe 11
-has 52 of 62 labeled images; ten are documented as missing. Recipe 6's 36
-original images are not present in this checkout. A clean Git clone contains
-none of the ignored `data/raw/` files, so image-level analyses require the local
-data files to be provided first.
+During the original work, images for Recipes 5 and 7–14 were available locally;
+Recipe 11 had 52 of 62 labeled images and Recipe 6's original images were not
+available. A clean Git clone contains none of the ignored `data/raw/` files,
+so image-level analyses require the local data files to be provided first.
 
 ### Re-run temporal analysis
 

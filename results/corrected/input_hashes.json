@@ -1,0 +1,9 @@
+{
+  "color_check_commit": "f1c91958ffd6e91abf7f6e74014a78e9ed23f9fc",
+  "sha256": {
+    "video5_frame_labels_original.csv": "1173a0c50ac95889adb2149923ef276daad70af450a3885b0b5aa55e4783cf94",
+    "video5_frame_labels_corrected.csv": "cfc618e1ac17886db7935b775e01fce67c2cd029537d6b66f6973fdceca5044c",
+    "video5_vial_recipes.csv": "4baf9246f8b34b803f8e3de4ef9915375311be83f5de91edf8cb249a78254f6d",
+    "frame_colors.csv": "ccf9bbdf0231871b45c2a37260a8e0b4f10d09fa98a52c95ace8f02a1f7266a1"
+  }
+}
