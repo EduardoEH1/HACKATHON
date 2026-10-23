@@ -1,0 +1,20 @@
+recipe_id,vial,filename,reason
+10,16,vial_fill_20260923_200048_210606.jpg,frames 0-4: no distinguishable colored liquid in the ROI; clear vial dominates
+10,16,vial_fill_20260923_200050_218834.jpg,frames 0-4: no distinguishable colored liquid in the ROI; clear vial dominates
+10,16,vial_fill_20260923_200052_236805.jpg,frames 0-4: no distinguishable colored liquid in the ROI; clear vial dominates
+10,16,vial_fill_20260923_200054_258468.jpg,frames 0-4: no distinguishable colored liquid in the ROI; clear vial dominates
+10,16,vial_fill_20260923_200056_275640.jpg,frames 0-4: no distinguishable colored liquid in the ROI; clear vial dominates
+10,17,vial_fill_20260923_200156_627982.jpg,frames 5-18: vial has moved; fixed ROI no longer contains visible colored liquid
+10,17,vial_fill_20260923_200158_635957.jpg,frames 5-18: vial has moved; fixed ROI no longer contains visible colored liquid
+10,17,vial_fill_20260923_200200_648232.jpg,frames 5-18: vial has moved; fixed ROI no longer contains visible colored liquid
+10,17,vial_fill_20260923_200202_658155.jpg,frames 5-18: vial has moved; fixed ROI no longer contains visible colored liquid
+10,17,vial_fill_20260923_200204_666047.jpg,frames 5-18: vial has moved; fixed ROI no longer contains visible colored liquid
+10,17,vial_fill_20260923_200206_675367.jpg,frames 5-18: vial has moved; fixed ROI no longer contains visible colored liquid
+10,17,vial_fill_20260923_200208_695377.jpg,frames 5-18: vial has moved; fixed ROI no longer contains visible colored liquid
+10,17,vial_fill_20260923_200210_703865.jpg,frames 5-18: vial has moved; fixed ROI no longer contains visible colored liquid
+10,17,vial_fill_20260923_200212_717227.jpg,frames 5-18: vial has moved; fixed ROI no longer contains visible colored liquid
+10,17,vial_fill_20260923_200214_734801.jpg,frames 5-18: vial has moved; fixed ROI no longer contains visible colored liquid
+10,17,vial_fill_20260923_200216_745010.jpg,frames 5-18: vial has moved; fixed ROI no longer contains visible colored liquid
+10,17,vial_fill_20260923_200218_755582.jpg,frames 5-18: vial has moved; fixed ROI no longer contains visible colored liquid
+10,17,vial_fill_20260923_200220_771634.jpg,frames 5-18: vial has moved; fixed ROI no longer contains visible colored liquid
+10,17,vial_fill_20260923_200222_780123.jpg,frames 5-18: vial has moved; fixed ROI no longer contains visible colored liquid

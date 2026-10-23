@@ -1,0 +1,20 @@
+recipe_id,vial,filename,reason
+7,7,vial_fill_20260923_195211_208191.jpg,frames 8-11: vial is moving/outside the ROI; liquid is not visible in the box
+7,7,vial_fill_20260923_195213_218746.jpg,frames 8-11: vial is moving/outside the ROI; liquid is not visible in the box
+7,7,vial_fill_20260923_195215_223633.jpg,frames 8-11: vial is moving/outside the ROI; liquid is not visible in the box
+7,7,vial_fill_20260923_195217_231150.jpg,frames 8-11: vial is moving/outside the ROI; liquid is not visible in the box
+7,8,vial_fill_20260923_195247_413927.jpg,frames 0-3: no distinguishable liquid color in the ROI; clear glass/background dominates
+7,8,vial_fill_20260923_195249_421728.jpg,frames 0-3: no distinguishable liquid color in the ROI; clear glass/background dominates
+7,8,vial_fill_20260923_195251_442796.jpg,frames 0-3: no distinguishable liquid color in the ROI; clear glass/background dominates
+7,8,vial_fill_20260923_195253_464908.jpg,frames 0-3: no distinguishable liquid color in the ROI; clear glass/background dominates
+7,9,vial_fill_20260923_195341_763465.jpg,frames 0-10: colored liquid is not clearly visible in the ROI yet
+7,9,vial_fill_20260923_195343_771335.jpg,frames 0-10: colored liquid is not clearly visible in the ROI yet
+7,9,vial_fill_20260923_195345_782254.jpg,frames 0-10: colored liquid is not clearly visible in the ROI yet
+7,9,vial_fill_20260923_195347_797024.jpg,frames 0-10: colored liquid is not clearly visible in the ROI yet
+7,9,vial_fill_20260923_195349_805277.jpg,frames 0-10: colored liquid is not clearly visible in the ROI yet
+7,9,vial_fill_20260923_195351_817760.jpg,frames 0-10: colored liquid is not clearly visible in the ROI yet
+7,9,vial_fill_20260923_195353_837081.jpg,frames 0-10: colored liquid is not clearly visible in the ROI yet
+7,9,vial_fill_20260923_195355_847582.jpg,frames 0-10: colored liquid is not clearly visible in the ROI yet
+7,9,vial_fill_20260923_195357_858696.jpg,frames 0-10: colored liquid is not clearly visible in the ROI yet
+7,9,vial_fill_20260923_195359_871529.jpg,frames 0-10: colored liquid is not clearly visible in the ROI yet
+7,9,vial_fill_20260923_195401_880102.jpg,frames 0-10: colored liquid is not clearly visible in the ROI yet

@@ -1,0 +1,14 @@
+recipe_id,vial,filename,reason
+13,25,vial_fill_20260923_201035_633065.jpg,positions 10 onward: vial moved or ROI no longer contains visible liquid
+13,25,vial_fill_20260923_201037_640228.jpg,positions 10 onward: vial moved or ROI no longer contains visible liquid
+13,25,vial_fill_20260923_201039_651169.jpg,positions 10 onward: vial moved or ROI no longer contains visible liquid
+13,25,vial_fill_20260923_201041_669617.jpg,positions 10 onward: vial moved or ROI no longer contains visible liquid
+13,25,vial_fill_20260923_201043_677593.jpg,positions 10 onward: vial moved or ROI no longer contains visible liquid
+13,25,vial_fill_20260923_201045_687607.jpg,positions 10 onward: vial moved or ROI no longer contains visible liquid
+13,25,vial_fill_20260923_201047_695902.jpg,positions 10 onward: vial moved or ROI no longer contains visible liquid
+13,25,vial_fill_20260923_201049_700343.jpg,positions 10 onward: vial moved or ROI no longer contains visible liquid
+13,25,vial_fill_20260923_201051_704834.jpg,positions 10 onward: vial moved or ROI no longer contains visible liquid
+13,27,vial_fill_20260923_201226_194094.jpg,positions 0-3: not enough visible liquid in the ROI
+13,27,vial_fill_20260923_201228_198917.jpg,positions 0-3: not enough visible liquid in the ROI
+13,27,vial_fill_20260923_201230_207283.jpg,positions 0-3: not enough visible liquid in the ROI
+13,27,vial_fill_20260923_201232_211742.jpg,positions 0-3: not enough visible liquid in the ROI

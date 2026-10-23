@@ -1,0 +1,19 @@
+recipe_id,vial,channel,sample_count,mean,std,min,max,status
+7,7,r_mean,8,113.05078125,23.86768135497558,76.9609375,131.77604166666666,preliminary; not a validated reference or threshold
+7,7,g_mean,8,56.50813802083333,16.92810639293313,33.5859375,70.80989583333333,preliminary; not a validated reference or threshold
+7,7,b_mean,8,15.843424479166666,6.72735200506977,5.955729166666667,21.5546875,preliminary; not a validated reference or threshold
+7,7,h_mean_opencv,8,12.3427734375,1.3180214559945493,10.5859375,13.5078125,preliminary; not a validated reference or threshold
+7,7,s_mean_opencv,8,220.15234375,9.736708577523064,213.07291666666666,241.05208333333334,preliminary; not a validated reference or threshold
+7,7,v_mean_opencv,8,113.05078125,23.86768135497558,76.9609375,131.77604166666666,preliminary; not a validated reference or threshold
+7,8,r_mean,8,85.51790364583334,37.60829171653413,29.330729166666668,127.38541666666667,preliminary; not a validated reference or threshold
+7,8,g_mean,8,55.237955729166664,34.10567574824568,28.424479166666668,110.140625,preliminary; not a validated reference or threshold
+7,8,b_mean,8,30.668294270833336,29.66566631126627,10.229166666666666,87.67447916666667,preliminary; not a validated reference or threshold
+7,8,h_mean_opencv,8,16.489583333333332,7.797719028376883,9.3515625,28.700520833333332,preliminary; not a validated reference or threshold
+7,8,s_mean_opencv,8,163.37825520833331,62.83489990208825,55.674479166666664,229.77083333333334,preliminary; not a validated reference or threshold
+7,8,v_mean_opencv,8,85.55013020833334,37.553337093269654,29.588541666666668,127.38541666666667,preliminary; not a validated reference or threshold
+7,9,r_mean,1,26.799479166666668,,26.799479166666668,26.799479166666668,preliminary; not a validated reference or threshold
+7,9,g_mean,1,90.87760416666667,,90.87760416666667,90.87760416666667,preliminary; not a validated reference or threshold
+7,9,b_mean,1,101.6484375,,101.6484375,101.6484375,preliminary; not a validated reference or threshold
+7,9,h_mean_opencv,1,94.33333333333333,,94.33333333333333,94.33333333333333,preliminary; not a validated reference or threshold
+7,9,s_mean_opencv,1,188.37760416666666,,188.37760416666666,188.37760416666666,preliminary; not a validated reference or threshold
+7,9,v_mean_opencv,1,101.6484375,,101.6484375,101.6484375,preliminary; not a validated reference or threshold

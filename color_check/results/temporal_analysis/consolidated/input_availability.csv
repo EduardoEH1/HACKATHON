@@ -1,0 +1,10 @@
+recipe_id,label_frames,measurement_rows,excluded_rows,missing_rows,measurement_csv,measurement_filenames_match_labels,excluded_csv_present,missing_csv_present
+5,41,25,16,0,results/recipe_5/recipe_5_manual_roi_measurements.csv,True,True,True
+6,36,18,0,0,results/recipe_6/recipe_6_preliminary_measurements.csv,True,False,False
+7,36,17,19,0,results/recipe_7/recipe_7_manual_roi_measurements.csv,True,True,False
+9,70,59,11,0,results/recipe_9/recipe_9_manual_roi_measurements.csv,True,True,False
+10,57,38,19,0,results/recipe_10/recipe_10_manual_roi_measurements.csv,True,True,False
+11,62,19,33,10,results/recipe_11/recipe_11_manual_roi_measurements.csv,True,True,True
+12,65,15,50,0,results/recipe_12/recipe_12_manual_roi_measurements.csv,True,True,True
+13,55,42,13,0,results/recipe_13/recipe_13_manual_roi_measurements.csv,True,True,True
+14,32,14,18,0,results/recipe_14/recipe_14_manual_roi_measurements.csv,True,True,True
