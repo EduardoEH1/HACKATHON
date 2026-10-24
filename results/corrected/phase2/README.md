@@ -1,104 +1,111 @@
-# Corrected provisional anomaly detector
+# Phase 2: Anomaly Detection
 
-The [model](provisional_model.json) compares a high-confidence liquid color to
-its recipe's early, middle, or late **video fill stage**. It uses the same
-automatic liquid-finder RGB/HSV method as the checked-in video measurements.
-The earlier Phase 2 model under `results/anomaly_detection/` was trained with
-incorrect still labels and should be treated as historical.
+Phase 2 compares an RGB/HSV measurement with the expected color pattern for
+its recipe and filling stage. It returns a numeric `anomaly_score` and status,
+or abstains if the input is unreliable or that recipe-stage profile is
+unavailable. The detector consumes color measurements; it does not find or
+track vials in camera images.
 
-## Reference selection and score
+## Inputs and outputs
 
-For each recipe, only its **last vial** supplies a provisional color pattern.
-The last vial is a candidate for the most flushed color, **not a confirmed
-good product**. The first two vials of each recipe are kept out of reference
-fitting and the review-boundary calculation. Each stage needs at least four
-high-confidence measurements from that last vial. The RGB/S/V center is a
-median and hue uses a circular center.
+The scoring interface accepts:
 
-The reference table and each scored frame/CLI response now name the specific
-`reference_vial_id` and label it `provisional; not confirmed normal`. In the
-JSON model, `reference_vials` maps recipe IDs to the chosen vial IDs; the
-per-stage `vial_ids` field also identifies the source. `reference_vials` in a
-score response remains a count of contributing vials, so use
-`reference_vial_id` to see which vial supplied the reference.
+- `recipe_id`: active recipe, 5–14 in the saved Dataset 2 model.
+- `r_mean`, `g_mean`, `b_mean`: mean RGB values, each on a 0–255 scale.
+- `h_mean_opencv`, `s_mean_opencv`, `v_mean_opencv`: OpenCV HSV values
+  (`H` 0–179; `S` and `V` 0–255).
+- `fill_progress`: progress from 0 to 1 through the labeled filling window.
+- Optional timestamp, plus upstream `found_vial`, `found_liquid`, and
+  `confidence` fields when using `score_salah_reading`.
 
-The detector uses the existing Phase 2 RGB/HSV distance formula. It divides
-the distance by a provisional stage limit and multiplies by 100. The limit is
-at least the 95th percentile of variation in that last vial's stage and a
-shared measurement-variation floor derived from **reference-vial readings
-only** (about 9.71% of scaled channel range here). `anomaly_score >= 100`
-returns `review_unusual`. This boundary is for a hackathon review prototype;
-it is **not a validated contamination or acceptance threshold**.
+Outputs include `anomaly_score`, `status`, `stage`, `reason`, reference sample
+count, `reference_vial_id`, and `reference_status`. A high-confidence liquid
+measurement is required. Missing recipe/progress, unreliable detection,
+invalid color values, unknown recipes, and unsupported recipe stages return a
+status without a score.
 
-There are 27 usable recipe-stage references. Recipe 11 has no early reference;
-Recipe 14 has no early or middle reference because its last vial has no
-high-confidence liquid measurement at those times. These stages return
-`insufficient_reference` with no score. Missing liquid, low confidence, and
-invalid measurements also receive no score.
+## Reference profiles and score
 
-## Evaluation files
+Each recipe has early, middle, and late stages based on equal thirds of its
+labeled fill progress. For each available stage, the profile center uses the
+median RGB/S/V and a circular hue center. Recipe 11 has no supported early
+stage; Recipe 14 has no supported early or middle stage because there are not
+enough high-confidence measurements.
 
-- [Stage references](reference_stage_summary.csv): available stages, sample
-  counts, candidate vial, RGB/HSV center, and provisional limit.
-- [Frame predictions](frame_predictions.csv): every labeled video fill frame,
-  original quality status, split (`reference` or `evaluation`), score/status,
-  and fill time. Low-quality frames retain blank scores.
-- [Per-vial evaluation](vial_evaluation_summary.csv): coverage, number of
-  review flags, and earliest possible score or flag.
+The current model uses the last vial of each recipe as a **candidate reference**
+on the assumption it may be most flushed. Dataset 2 does not establish that
+these vials are normal. The selected vial IDs are recorded in the model,
+reference table, frame predictions, and score response, with the status
+`provisional; not confirmed normal`.
 
-Across the **20 evaluation vials**, 577 high-confidence frames had supported
-stages; 255 were marked for review. Seventeen of those vials had at least one
-flag. This is a measure of difference from a single candidate reference vial,
-not detection accuracy. Some vials may differ due to carryover, lighting,
-motion, liquid depth, or the finder ROI. There are no confirmed good/bad labels
-for precision, recall, or a false-alarm rate. A first review flag can be used
-for a demo timeline, but the actual start of contamination is unknown.
+The score is `100 × color_distance / stage_limit`. The limit is at least the
+95th-percentile within-stage variation from that recipe's reference vial and a
+shared variation floor estimated from reference-vial measurements only
+(9.71% of the scaled channel range in this model). A score at or above 100
+returns `review_unusual`. That boundary is an exploratory review setting, not
+a validated acceptance or contamination threshold.
 
-## Feed Salah's output to the detector
+## Current evaluation
 
-`score_salah_reading` in
-[corrected_pipeline.py](../../../src/vialsense/corrected_pipeline.py)
-accepts the dictionary returned by Salah's `Detection.to_dict()` or one row
-from his `frame_colors.csv`. It passes RGB `(r_mean, g_mean, b_mean)` and
-OpenCV HSV `(h_mean_opencv, s_mean_opencv, v_mean_opencv)` to the existing
-`score_measurement` function. It checks `found_vial`, `found_liquid`, and
-`confidence == "high"` before scoring. A live `Detection` has no recipe or
-progress, so the machine/digital-twin integration must supply them:
+Evaluation holds each recipe's reference vial out of the comparison set and
+scores the other two vials. Of 577 high-confidence measurements with supported
+stages, 255 were marked `review_unusual`; 17 of the 20 evaluation vials had at
+least one such measurement. This measures difference from one candidate
+reference, not detector accuracy. Lighting, ROI variation, fill depth, normal
+process variation, or actual fluid differences may contribute. There are no
+confirmed good/bad labels to establish precision, recall, or false-alarm rate.
+
+## Run and integrate
+
+From the repository root, use the installed dependencies to rebuild the
+current outputs and run the tests:
+
+```bash
+PYTHONPATH=src python -m vialsense.corrected_cli build
+PYTHONPATH=src python -m unittest discover -s tests -v
+```
+
+The build uses the saved measurement inputs and writes under
+`results/corrected/`. To score one JSON reading produced by the liquid finder:
+
+```bash
+PYTHONPATH=src python -m vialsense.corrected_cli score \
+  --recipe-id 9 --progress 0.40 < reading.json
+```
+
+`reading.json` must contain the six color fields and detection status fields.
+The machine or digital twin supplies the active recipe and fill progress. In
+Python, the adapter accepts the dictionary from Salah's
+`Detection.to_dict()`:
 
 ```python
 from vialsense.anomaly import load_model
 from vialsense.corrected_pipeline import score_salah_reading
 
 model = load_model("results/corrected/phase2/provisional_model.json")
-# detection = find_liquid(frame)  # from Salah's liquid_finder on color-check
 result = score_salah_reading(
-    model, detection.to_dict(), recipe_id=current_recipe,
+    model,
+    detection.to_dict(),
+    recipe_id=current_recipe,
     fill_progress=current_fill_progress,
 )
 ```
 
-For a single JSON line emitted by Salah's `find_color` command, run:
+The tests replay saved high-confidence liquid-finder measurements through the
+adapter and CLI, including abstention behavior. A live camera demo also needs
+Salah's running detector and a live source for recipe and fill progress; the
+checked-in data does not include a camera feed.
 
-```bash
-PYTHONPATH=src python -m vialsense.corrected_cli score \
-  --recipe-id 9 --progress 0.104 < reading.json
-```
+## Files
 
-The `score` command returns JSON with `anomaly_score`, `status`, `stage`,
-`reference_vial_id`, `reference_status`, reference sample count, and reason.
-`reading.json` must contain the six color fields, `found_vial`, `found_liquid`,
-and `confidence`. The `score` command also accepts `--reading-file`. The
-machine recipe and fill progress are required; a camera timestamp alone cannot
-supply them.
+- [Model](provisional_model.json): recipe-stage centers, limits, and reference
+  vial IDs.
+- [Stage reference table](reference_stage_summary.csv): center values,
+  reference counts, vial ID, and per-stage availability.
+- [Frame predictions](frame_predictions.csv): measurement status, progress,
+  score, status, and reference vial for every saved fill frame.
+- [Per-vial evaluation](vial_evaluation_summary.csv): coverage and review
+  counts by evaluation vial.
 
-The integration check replays a high-confidence row from the saved
-`frame_colors.csv` through the same adapter and CLI used for live readings.
-It validates detector-output-to-score wiring and abstention behavior. A live
-camera session still needs Salah's running capture/detection code and a source
-of current recipe/fill progress; this workspace does not contain a live camera
-feed or the original video file.
-
-Do not compare these video-ROI measurements to the old fixed-ROI Phase 2
-model. The color distributions and clock labels differ. To improve the model,
-obtain known-good and deliberately abnormal runs, confirm reference-vial
-quality, and measure performance before using an automatic product alert.
+For Phase 1 timelines and color summaries, see the
+[RGB/HSV analysis guide](../README.md).
