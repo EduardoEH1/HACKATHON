@@ -53,6 +53,14 @@ by Salah's liquid-finder `Detection.to_dict()` or a saved measurement row. Live
 use requires the machine or digital twin to provide current recipe and fill
 progress.
 
+## Integrated detector run
+
+The [integration guide](results/integration/README.md) shows how to replay
+Dataset 2 Video 5 through Phase 1 and Phase 2, or run Salah's `find_liquid()`
+on a local copy of the Video 5 MP4. Saved replay is executable without raw
+video. For a new video without recipe/fill timing, the runner saves color
+readings and leaves anomaly scores blank until that context is provided.
+
 ## Setup and run
 
 Use Python 3.10 or newer. From the repository root:
@@ -69,7 +77,7 @@ snapshots, then run the integration and analysis checks:
 
 ```bash
 PYTHONPATH=src python -m vialsense.corrected_cli build
-PYTHONPATH=src python -m unittest discover -s tests -v
+PYTHONPATH=src python -m pytest -q tests
 ```
 
 The build writes under `results/corrected/`. It needs no raw images or video;
@@ -97,6 +105,7 @@ src/vialsense/                 Reusable color, timeline, and anomaly functions
 inputs/color_check/            Saved label and liquid-finder CSV inputs
 results/corrected/phase1/      Current RGB/HSV timelines, summaries, plots
 results/corrected/phase2/      Current provisional model and scores
+results/integration/           Detector-to-score runs and instructions
 results/temporal_analysis/      Earlier temporal comparisons and reports
 results/recipe_5 ... recipe_14/ Earlier manual-ROI samples and annotations
 tests/                          Checks for Phase 2 and saved integration data
