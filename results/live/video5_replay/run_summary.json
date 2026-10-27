@@ -1,0 +1,11 @@
+{
+  "vials": 30,
+  "verdicts": {
+    "PASS": 20,
+    "FLAG": 10
+  },
+  "queue_used": 30,
+  "queue_length": 30,
+  "calibration": null,
+  "status": "provisional; not validated contamination detection"
+}

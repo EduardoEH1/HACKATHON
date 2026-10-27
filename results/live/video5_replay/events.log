@@ -1,0 +1,60 @@
+Vial 1 arrived: Recipe 5
+Vial 1 done: FLAG. Color off for this recipe. Previous recipe unknown (first vial of the run)
+Vial 2 arrived: Recipe 5
+Vial 2 done: PASS
+Vial 3 arrived: Recipe 5
+Vial 3 done: PASS
+Vial 4 arrived: Recipe 5 -> 6. Carryover risk on this vial
+Vial 4 done: FLAG. Likely carryover from Recipe 5: color sits closer to Recipe 5 (score 67) than to Recipe 6 (score 248). First vial after a recipe change
+Vial 5 arrived: Recipe 6
+Vial 5 done: FLAG. Color off, but the vial before also ran Recipe 6, so this is not recipe-change carryover. Check lighting, the vial, or the dispensed volume
+Vial 6 arrived: Recipe 6
+Vial 6 done: PASS
+Vial 7 arrived: Recipe 6 -> 7. Carryover risk on this vial
+Vial 7 done: FLAG. Likely carryover from Recipe 6: color sits closer to Recipe 6 (score 202) than to Recipe 7 (score 360). First vial after a recipe change
+Vial 8 arrived: Recipe 7
+Vial 8 done: PASS
+Vial 9 arrived: Recipe 7
+Vial 9 done: PASS
+Vial 10 arrived: Recipe 7 -> 8. Carryover risk on this vial
+Vial 10 done: FLAG. Likely carryover from Recipe 7: color sits closer to Recipe 7 (score 58) than to Recipe 8 (score 273). First vial after a recipe change
+Vial 11 arrived: Recipe 8
+Vial 11 done: PASS
+Vial 12 arrived: Recipe 8
+Vial 12 done: PASS
+Vial 13 arrived: Recipe 8 -> 9. Carryover risk on this vial
+Vial 13 done: PASS. First vial after Recipe 8 -> 9. No carryover seen
+Vial 14 arrived: Recipe 9
+Vial 14 done: PASS
+Vial 15 arrived: Recipe 9
+Vial 15 done: PASS
+Vial 16 arrived: Recipe 9 -> 10. Carryover risk on this vial
+Vial 16 done: FLAG. Likely carryover from Recipe 9: color sits closer to Recipe 9 (score 103) than to Recipe 10 (score 206). First vial after a recipe change
+Vial 17 arrived: Recipe 10
+Vial 17 done: PASS
+Vial 18 arrived: Recipe 10
+Vial 18 done: PASS
+Vial 19 arrived: Recipe 10 -> 11. Carryover risk on this vial
+Vial 19 done: FLAG. Possible carryover: first vial after Recipe 10 -> 11. Color is off but does not match Recipe 10 either; leftover may have mixed with the new liquid
+Vial 20 arrived: Recipe 11
+Vial 20 done: PASS
+Vial 21 arrived: Recipe 11
+Vial 21 done: PASS
+Vial 22 arrived: Recipe 11 -> 12. Carryover risk on this vial
+Vial 22 done: FLAG. Likely carryover from Recipe 11: color sits closer to Recipe 11 (score 168) than to Recipe 12 (score 315). First vial after a recipe change
+Vial 23 arrived: Recipe 12
+Vial 23 done: PASS
+Vial 24 arrived: Recipe 12
+Vial 24 done: PASS
+Vial 25 arrived: Recipe 12 -> 13. Carryover risk on this vial
+Vial 25 done: FLAG. Likely carryover from Recipe 12: color sits closer to Recipe 12 (score 33) than to Recipe 13 (score 130). First vial after a recipe change
+Vial 26 arrived: Recipe 13
+Vial 26 done: PASS
+Vial 27 arrived: Recipe 13
+Vial 27 done: PASS
+Vial 28 arrived: Recipe 13 -> 14. Carryover risk on this vial
+Vial 28 done: FLAG. Likely carryover from Recipe 13: color sits closer to Recipe 13 (score 53) than to Recipe 14 (score 267). First vial after a recipe change
+Vial 29 arrived: Recipe 14
+Vial 29 done: PASS
+Vial 30 arrived: Recipe 14
+Vial 30 done: PASS

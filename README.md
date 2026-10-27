@@ -61,6 +61,21 @@ on a local copy of the Video 5 MP4. Saved replay is executable without raw
 video. For a new video without recipe/fill timing, the runner saves color
 readings and leaves anomaly scores blank until that context is provided.
 
+## Live mode
+
+[LIVE_MODE.md](LIVE_MODE.md) runs the full check on a live camera. The camera
+supplies the timing (vial arrival, fill start, departure), and the operator
+types the recipe queue before the run. A one-time calibration maps any camera
+view onto the view the liquid finder was tuned on. Each flagged vial gets a
+cause: for example, "Likely carryover from Recipe 6". Replaying video 5 as live
+with labels hidden: 30 of 30 vials tracked, 9 of 10 carryover vials flagged,
+1 false alarm in 10 clean vials.
+
+```bash
+PYTHONPATH=src python -m vialsense.live_cli calibrate --camera 0
+PYTHONPATH=src python -m vialsense.live_cli run --camera 0 --recipes "7x3,8x3" --previous-recipe 6
+```
+
 ## Setup and run
 
 Use Python 3.10 or newer. From the repository root:

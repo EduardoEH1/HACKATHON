@@ -1,0 +1,31 @@
+vial,recipe_id,previous_recipe,recipe_change,arrived_s,fill_start_detected_s,left_s,est_fill_start_s,est_fill_end_s,scored_frames,flagged_share,median_score,verdict,explanation
+1,5,,False,0.0,14.8,28.2,-1.51,26.2,129,0.922,140.6,FLAG,Color off for this recipe. Previous recipe unknown (first vial of the run)
+2,5,5.0,False,29.0,46.6,74.6,44.89,72.6,129,0.302,66.8,PASS,
+3,5,5.0,False,75.4,94.2,121.0,91.29,119.0,120,0.0,10.8,PASS,
+4,6,5.0,True,122.0,140.6,162.2,136.06,160.2,97,1.0,247.9,FLAG,Likely carryover from Recipe 5: color sits closer to Recipe 5 (score 67) than to Recipe 6 (score 248). First vial after a recipe change
+5,6,6.0,False,163.0,181.4,204.2,178.06,202.2,100,0.74,104.6,FLAG,"Color off, but the vial before also ran Recipe 6, so this is not recipe-change carryover. Check lighting, the vial, or the dispensed volume"
+6,6,6.0,False,205.0,223.2,247.0,220.86,245.0,104,0.106,9.9,PASS,
+7,7,6.0,True,265.2,285.2,309.2,283.74,307.2,108,1.0,359.9,FLAG,Likely carryover from Recipe 6: color sits closer to Recipe 6 (score 202) than to Recipe 7 (score 360). First vial after a recipe change
+8,7,7.0,False,310.4,339.4,362.4,336.94,360.4,102,0.0,33.2,PASS,
+9,7,7.0,False,363.4,393.0,416.4,390.94,414.4,104,0.0,9.6,PASS,
+10,8,7.0,True,417.2,437.0,473.2,433.79,471.2,165,1.0,272.6,FLAG,Likely carryover from Recipe 7: color sits closer to Recipe 7 (score 58) than to Recipe 8 (score 273). First vial after a recipe change
+11,8,8.0,False,474.0,495.8,529.8,490.39,527.8,158,0.063,35.9,PASS,
+12,8,8.0,False,530.8,549.4,588.6,549.19,586.6,171,0.053,23.2,PASS,
+13,9,8.0,True,589.6,611.0,658.8,609.77,656.8,216,0.083,35.4,PASS,First vial after Recipe 8 -> 9. No carryover seen
+14,9,9.0,False,659.8,683.4,728.0,678.97,726.0,209,0.048,27.1,PASS,
+15,9,9.0,False,729.0,753.8,799.6,750.57,797.6,219,0.037,17.0,PASS,
+16,10,9.0,True,800.6,821.8,858.4,818.46,856.4,171,0.661,205.6,FLAG,Likely carryover from Recipe 9: color sits closer to Recipe 9 (score 103) than to Recipe 10 (score 206). First vial after a recipe change
+17,10,10.0,False,859.4,877.0,915.6,875.66,913.6,165,0.055,16.4,PASS,
+18,10,10.0,False,916.6,935.8,972.4,932.46,970.4,159,0.006,7.9,PASS,
+19,11,10.0,True,973.2,991.2,1033.2,989.29,1031.2,103,0.583,139.5,FLAG,Possible carryover: first vial after Recipe 10 -> 11. Color is off but does not match Recipe 10 either; leftover may have mixed with the new liquid
+20,11,11.0,False,1034.2,1057.2,1094.2,1050.29,1092.2,96,0.01,8.2,PASS,
+21,11,11.0,False,1095.0,1134.2,1155.4,1111.49,1153.4,94,0.0,11.5,PASS,
+22,12,11.0,True,1156.2,1186.6,1223.0,1178.37,1221.0,172,1.0,315.3,FLAG,Likely carryover from Recipe 11: color sits closer to Recipe 11 (score 168) than to Recipe 12 (score 315). First vial after a recipe change
+23,12,12.0,False,1224.2,1247.2,1292.4,1247.77,1290.4,213,0.028,35.1,PASS,
+24,12,12.0,False,1293.2,1305.2,1361.4,1316.77,1359.4,206,0.019,15.8,PASS,
+25,13,12.0,True,1371.2,1386.2,1428.0,1388.52,1426.0,187,0.807,130.2,FLAG,Likely carryover from Recipe 12: color sits closer to Recipe 12 (score 33) than to Recipe 13 (score 130). First vial after a recipe change
+26,13,13.0,False,1429.0,1452.2,1491.2,1451.72,1489.2,184,0.109,41.5,PASS,
+27,13,13.0,False,1492.4,1517.8,1556.6,1517.12,1554.6,185,0.016,30.9,PASS,
+28,14,13.0,True,1557.6,1580.8,1603.2,1579.28,1601.2,36,1.0,266.9,FLAG,Likely carryover from Recipe 13: color sits closer to Recipe 13 (score 53) than to Recipe 14 (score 267). First vial after a recipe change
+29,14,14.0,False,1604.2,1627.0,1649.4,1625.48,1647.4,31,0.484,98.6,PASS,
+30,14,14.0,False,1650.2,1674.0,1695.8,1671.88,1693.8,23,0.043,9.7,PASS,
