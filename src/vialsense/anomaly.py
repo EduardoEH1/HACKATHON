@@ -60,14 +60,16 @@ def fit_model(
     measurements: pd.DataFrame, *, min_stage_samples: int = MIN_STAGE_SAMPLES,
     min_stage_vials: int = MIN_STAGE_VIALS,
     min_distance_percent: float = MIN_DISTANCE_PERCENT,
+    review_score: float = REVIEW_SCORE,
 ) -> dict[str, Any]:
     """Fit one provisional three-stage profile for each recipe in a data frame.
 
     Required columns: recipe_id, vial, fill_progress, and CHANNELS. Only
     caller-approved, reliable measurements should be passed here.
     """
-    if min_stage_samples < 1 or min_stage_vials < 1 or min_distance_percent <= 0:
-        raise ValueError("reference requirements and distance floor must be positive")
+    if (min_stage_samples < 1 or min_stage_vials < 1 or min_distance_percent <= 0
+            or not np.isfinite(review_score) or review_score <= 0):
+        raise ValueError("reference requirements, distance floor, and review score must be positive")
     required = {"recipe_id", "vial", "fill_progress", *CHANNELS}
     missing = required - set(measurements.columns)
     if missing:
@@ -86,12 +88,16 @@ def fit_model(
     if not data[CHANNELS[3]].between(0, 179).all():
         raise ValueError("OpenCV hue training channel must be between 0 and 179")
     data["stage"] = data.fill_progress.map(stage_for)
+    if "batch_id" in data:
+        data["_vial_group"] = data.batch_id.astype(str) + "::" + data.vial.astype(int).astype(str)
+    else:
+        data["_vial_group"] = data.vial.astype(int).astype(str)
     recipes: dict[str, Any] = {}
     for recipe_id, recipe_rows in data.groupby("recipe_id"):
         stages: dict[str, Any] = {}
         for stage in STAGES:
             rows = recipe_rows.loc[recipe_rows.stage == stage]
-            n_vials = int(rows.vial.nunique())
+            n_vials = int(rows._vial_group.nunique())
             entry: dict[str, Any] = {
                 "samples": int(len(rows)), "vials": n_vials,
                 "vial_ids": sorted(int(v) for v in rows.vial.unique()),
@@ -106,9 +112,9 @@ def fit_model(
                 # would otherwise hide. No held-out evaluation vial is used.
                 cross_vial = []
                 if n_vials > 1:
-                    for vial in rows.vial.unique():
-                        others = rows.loc[rows.vial != vial, list(CHANNELS)].to_numpy(float)
-                        own = rows.loc[rows.vial == vial, list(CHANNELS)].to_numpy(float)
+                    for vial_group in rows._vial_group.unique():
+                        others = rows.loc[rows._vial_group != vial_group, list(CHANNELS)].to_numpy(float)
+                        own = rows.loc[rows._vial_group == vial_group, list(CHANNELS)].to_numpy(float)
                         other_center = _center(others)
                         cross_vial.extend(color_distance(sample, other_center) for sample in own)
                 within_q95 = float(np.quantile(distances, 0.95))
@@ -127,7 +133,7 @@ def fit_model(
         "min_stage_samples": min_stage_samples,
         "min_stage_vials": min_stage_vials,
         "min_distance_percent": min_distance_percent,
-        "review_score": REVIEW_SCORE,
+        "review_score": float(review_score),
         "recipes": recipes,
     }
 
@@ -205,7 +211,8 @@ def score_measurement(
     score = 100 * distance / entry["reference_limit"]
     result.update(
         anomaly_score=round(score, 2),
-        status="review_unusual" if score >= REVIEW_SCORE else "within_provisional_pattern",
+        status=("review_unusual" if score >= float(model.get("review_score", REVIEW_SCORE))
+                else "within_provisional_pattern"),
         reason="exploratory comparison only",
         distance_percent=round(distance, 3),
         reference_limit_percent=round(entry["reference_limit"], 3),
